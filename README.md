@@ -15,7 +15,7 @@ timing **only the decode kernel** while logging CPU/GPU utilization and power.
 
 Across the full sweep, GPU offload provides a stable, repeatable throughput advantage:
 - **Mean GPU/CPU throughput speedup ≈ 5.8×** (median ≈ 5.8×; min ≈ 4.7×; max ≈ 6.4×). 
-- Throughput declines with iterations (expected), but the **speedup holds across I**. 
+- Throughput declines with iterations (expected), but the **speedup holds across $I$**. 
 
 ### URLLC slot-headroom interpretation (0.5 ms slot)
 Using amortized per-codeword service time \($t_{cb} = t_{dec}/N_{cw}$\) and normalizing by **$T_{slot}$ = 0.5 ms**:
