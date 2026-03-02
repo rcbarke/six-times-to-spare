@@ -5,7 +5,7 @@ This repository contains the **reproducible, telemetry-backed microbenchmark** a
 **“Six Times to Spare: Characterizing GPU-Accelerated 5G LDPC Decoding for Edge-RSU Communications.”** 
 
 The goal is simple: **isolate and measure LDPC5G decoding headroom** on a compact heterogeneous edge node (DGX Spark), comparing **Grace CPU** vs **GB10 GPU** under a deliberately heavy stress sweep over:
-- batch parallelism (**$N_cw$ = 4096 → 20480**) and
+- batch parallelism (**$N_{cw}$ = 4096 → 20480**) and
 - belief-propagation iterations (**$I$ = 4 → 22**),
 timing **only the decode kernel** while logging CPU/GPU utilization and power. 
 
@@ -51,11 +51,11 @@ During active decode periods:
 ## System model and workload (what we benchmark)
 
 We implement an NR-like link-level chain using Sionna LDPC5G components:
-- (k, n) = (512, 1024), rate R = 1/2
+- ($k$, $n$) = (512, 1024), rate $R$ = 1/2
 - 16-QAM mapping
 - AWGN channel
 - soft demapper generates LLRs
-- LDPC decoder consumes an LLR tensor of shape \(N_{cw} \times n\) 
+- LDPC decoder consumes an LLR tensor of shape \($N_{cw}$ \times $n$\) 
 
 **Important:** the benchmark is designed to **stress and saturate** the compute substrate to expose an **upper envelope** of throughput/headroom; it is not trying to emulate a specific scheduler instance. 
 
