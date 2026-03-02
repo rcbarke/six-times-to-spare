@@ -18,7 +18,7 @@ Across the full sweep, GPU offload provides a stable, repeatable throughput adva
 - Throughput declines with iterations (expected), but the **speedup holds across I**. 
 
 ### URLLC slot-headroom interpretation (0.5 ms slot)
-Using amortized per-codeword service time \($t_{cb} = t_{dec}/N_{cw}$\) and normalizing by **Tslot = 0.5 ms**:
+Using amortized per-codeword service time \($t_{cb} = t_{dec}/N_{cw}$\) and normalizing by **$T_{slot}$ = 0.5 ms**:
 - **CPU** reaches **0.720 ms at I=20** (i.e., **1.44× the slot**).
 - **GPU** reaches **0.125 ms at I=20** (i.e., **0.25× the slot**). 
 
@@ -36,7 +36,7 @@ During active decode periods:
 - `ldpc_cpu_gpu_benchmark.py` — generates LLRs once, then times **only LDPC5G decode** on `/CPU:0` and `/GPU:0`; appends run summaries to CSV.
 
 **Sweep + checkpointing**
-- `sweep_ldpc.sh` — runs the ($N_cw$, I) sweep and logs results
+- `sweep_ldpc.sh` — runs the ($N_{cw}$, $I$) sweep and logs results
 - `ldpc_sweep_seed_checkpoint.py` — derives a resume checkpoint from the results CSV
 
 **Telemetry + plotting**
@@ -55,7 +55,7 @@ We implement an NR-like link-level chain using Sionna LDPC5G components:
 - 16-QAM mapping
 - AWGN channel
 - soft demapper generates LLRs
-- LDPC decoder consumes an LLR tensor of shape \($N_{cw}$ \times $n$\) 
+- LDPC decoder consumes an LLR tensor of shape \($N_{cw} \times n$\) 
 
 **Important:** the benchmark is designed to **stress and saturate** the compute substrate to expose an **upper envelope** of throughput/headroom; it is not trying to emulate a specific scheduler instance. 
 
@@ -103,7 +103,7 @@ Outputs:
 
 ## Metrics reported (paper-consistent)
 
-Per configuration ($N_cw$, $I$), the harness reports:
+Per configuration ($N_{cw}$, $I$), the harness reports:
 
 * batch decode latency: ($t_{dec}$)
 * throughput: ($T_{thr} = \frac{N_{cw} \cdot k}{t_{dec}}$)
@@ -113,11 +113,11 @@ Timing includes explicit synchronization so asynchronous GPU work completes befo
 
 ---
 
-## Scope and how not to overclaim
+## Scope
 
 This repo supports a **compute characterization** of the LDPC kernel:
 
-* (t_{cb}) is **amortized under batch-parallel execution**, not “arrival-at-idle” single-codeword latency.
+* ($t_{cb}$) is **amortized under batch-parallel execution**, not “arrival-at-idle” single-codeword latency.
 * The workload uses AWGN and reuses a fixed LLR tensor for timing consistency.
 * Stronger URLLC latency claims would require **small-batch and tail-latency (p95/p99/p99.99)** measurements in a more integrated real-time stack. 
 
