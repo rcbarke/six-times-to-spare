@@ -5,8 +5,8 @@ This repository contains the **reproducible, telemetry-backed microbenchmark** a
 **“Six Times to Spare: Characterizing GPU-Accelerated 5G LDPC Decoding for Edge-RSU Communications.”** 
 
 The goal is simple: **isolate and measure LDPC5G decoding headroom** on a compact heterogeneous edge node (DGX Spark), comparing **Grace CPU** vs **GB10 GPU** under a deliberately heavy stress sweep over:
-- batch parallelism (**Ncw = 4096 → 20480**) and
-- belief-propagation iterations (**I = 4 → 22**),
+- batch parallelism (**$N_cw$ = 4096 → 20480**) and
+- belief-propagation iterations (**$I$ = 4 → 22**),
 timing **only the decode kernel** while logging CPU/GPU utilization and power. 
 
 ---
@@ -18,7 +18,7 @@ Across the full sweep, GPU offload provides a stable, repeatable throughput adva
 - Throughput declines with iterations (expected), but the **speedup holds across I**. 
 
 ### URLLC slot-headroom interpretation (0.5 ms slot)
-Using amortized per-codeword service time \(t_{cb} = t_{dec}/N_{cw}\) and normalizing by **Tslot = 0.5 ms**:
+Using amortized per-codeword service time \($t_{cb} = t_{dec}/N_{cw}$\) and normalizing by **Tslot = 0.5 ms**:
 - **CPU** reaches **0.720 ms at I=20** (i.e., **1.44× the slot**).
 - **GPU** reaches **0.125 ms at I=20** (i.e., **0.25× the slot**). 
 
@@ -36,7 +36,7 @@ During active decode periods:
 - `ldpc_cpu_gpu_benchmark.py` — generates LLRs once, then times **only LDPC5G decode** on `/CPU:0` and `/GPU:0`; appends run summaries to CSV.
 
 **Sweep + checkpointing**
-- `sweep_ldpc.sh` — runs the (Ncw, I) sweep and logs results
+- `sweep_ldpc.sh` — runs the ($N_cw$, I) sweep and logs results
 - `ldpc_sweep_seed_checkpoint.py` — derives a resume checkpoint from the results CSV
 
 **Telemetry + plotting**
@@ -103,11 +103,11 @@ Outputs:
 
 ## Metrics reported (paper-consistent)
 
-Per configuration (Ncw, I), the harness reports:
+Per configuration ($N_cw$, $I$), the harness reports:
 
-* batch decode latency: (t_{dec})
-* throughput: (T_{thr} = \frac{N_{cw} \cdot k}{t_{dec}})
-* amortized per-codeword service time: (t_{cb} = \frac{t_{dec}}{N_{cw}}) 
+* batch decode latency: ($t_{dec}$)
+* throughput: ($T_{thr} = \frac{N_{cw} \cdot k}{t_{dec}}$)
+* amortized per-codeword service time: ($t_{cb} = \frac{t_{dec}}{N_{cw}}$) 
 
 Timing includes explicit synchronization so asynchronous GPU work completes before stopping the timer. 
 
