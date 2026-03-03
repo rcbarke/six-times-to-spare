@@ -4,9 +4,9 @@ This repository contains a reproducible LDPC5G decoding microbenchmark and artif
 
 At a high level:
 
-- **Top-level sweep (dense / urban proxy):** large `N_cw` sweep to stress batch parallelism and expose the upper throughput envelope.
-- **`baseline/` sweep (rural / tail proxy):** lower-bound `N_cw ∈ {1, 2, 4, …, 1024}` sweep designed for p95/p99 tail interpretation.
-- **`consolidated/` dataset:** auto-generated merge of baseline + dense artifacts spanning the full tested `N_cw` range.
+- **Top-level sweep (dense / urban proxy):** large `$N_{cw}$` sweep to stress batch parallelism and expose the upper throughput envelope.
+- **`baseline/` sweep (rural / tail proxy):** lower-bound `$N_{cw}$ ∈ {1, 2, 4, …, 1024}` sweep designed for p95/p99 tail interpretation.
+- **`consolidated/` dataset:** auto-generated merge of baseline + dense artifacts spanning the full tested `$N_{cw}$` range.
 
 ---
 
@@ -17,7 +17,7 @@ The top-level dense sweep demonstrates a consistent **~5.7×–5.9× throughput 
 Key plots (generated artifacts):
 
 - `fig_ldpc_throughput_vs_iter.png` — throughput degrades with more LDPC iterations for both CPU and GPU, with the GPU sustaining a ~6× lead.
-- `fig_ldpc_throughput_vs_codewords.png` — throughput vs. `N_cw` in the dense regime, showing a stable ~6× gap.
+- `fig_ldpc_throughput_vs_codewords.png` — throughput vs. `$N_{cw}$` in the dense regime, showing a stable ~6× gap.
 - `fig_ldpc_resource_utilization.png` — resource usage histograms during the sweep:
   - CPU usage clusters around a high-but-stable core-equivalent band during active decoding.
   - GPU utilization shows strong saturation during active samples, as expected for the dense regime.
@@ -112,14 +112,14 @@ Repository organization for dataset-manipulation utilities (originally designed 
 
 Lower-bound, tail-focused sweep:
 
-* `N_cw ∈ {1, 2, 4, …, 1024}` (powers of two)
+* `$N_{cw}$ ∈ {1, 2, 4, …, 1024}` (powers of two)
 * Rural morphology proxy + p95/p99 tail studies
 
 Contains its own sweep driver (`sweep_ldpc_baseline.sh`) and a full artifact set (CSVs/logs/checkpoint/figures).
 
 ### `consolidated/`
 
-Auto-generated merge of baseline + dense datasets, intended as the **single source of truth** for end-to-end plotting and reporting across the full tested `N_cw` range.
+Auto-generated merge of baseline + dense datasets, intended as the **single source of truth** for end-to-end plotting and reporting across the full tested `$N_{cw}$` range.
 
 ---
 
@@ -188,7 +188,7 @@ This writes merged artifacts into `consolidated/`.
 
 ## Recommended workflow
 
-1. Run the **dense sweep** (repo root) to capture saturation behavior in large `N_cw` regimes.
+1. Run the **dense sweep** (repo root) to capture saturation behavior in large `$N_{cw}$` regimes.
 2. Run the **baseline sweep** (`baseline/`) for lower-bound behavior and tail interpretation.
 3. Run the **aggregator** to produce a single dataset in `consolidated/`.
 4. Use `plot_ldpc_results.py` (or your downstream analysis pipeline) against `consolidated/` for end-to-end figures that span both regimes.

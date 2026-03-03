@@ -46,6 +46,19 @@ def load_gpu_stats(path: str = "gpu_ldpc_sweep_stats.csv") -> pd.DataFrame:
     # Parse timestamp ("YYYY/MM/DD HH:MM:SS.mmm")
     gpu["ts"] = pd.to_datetime(gpu["timestamp"], format="%Y/%m/%d %H:%M:%S.%f")
 
+    # Convert nvidia-smi fields like "6 %" and "6.15 W" -> numeric
+    for col in ["utilization.gpu [%]", "power.draw [W]"]:
+        if col in gpu.columns:
+            gpu[col] = (
+                gpu[col]
+                .astype(str)
+                .str.replace(r"[^0-9.\-]", "", regex=True)  # strip units, spaces, etc.
+            )
+            gpu[col] = pd.to_numeric(gpu[col], errors="coerce")
+
+    # drop rows that couldn't be parsed
+    gpu = gpu.dropna(subset=["utilization.gpu [%]"])
+    
     return gpu
 
 
