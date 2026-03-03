@@ -188,7 +188,7 @@ This writes merged artifacts into `consolidated/`.
 
 ## Recommended workflow
 
-1. Run the **dense sweep** (repo root) to capture saturation behavior in large `$N_{cw}$` regimes.
+1. Run the **dense sweep** (repo root) to capture saturation behavior in large `\($N_{cw}$)` regimes.
 2. Run the **baseline sweep** (`baseline/`) for lower-bound behavior and tail interpretation.
 3. Run the **aggregator** to produce a single dataset in `consolidated/`.
 4. Use `plot_ldpc_results.py` (or your downstream analysis pipeline) against `consolidated/` for end-to-end figures that span both regimes.
