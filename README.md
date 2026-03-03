@@ -277,9 +277,9 @@ This produces (or appends to):
 
 * `ldpc_sionna_spark.csv`
 
-#### 2) Automated telemetry
+#### 2) Additional telemetry
 
-In addition to raw LDPC timing, the sweep will also log system-level resource utilization metrics.
+The sweep script will log raw LDPC timing statistics. For full reproducibility, we recommend running system-level resource utilization metrics across two additional terminals:
 
 **GPU telemetry:**
 
