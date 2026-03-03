@@ -17,7 +17,7 @@ The top-level dense sweep demonstrates a consistent **~5.7×–5.9× throughput 
 Key plots (generated artifacts):
 
 - `fig_ldpc_throughput_vs_iter.png` — throughput degrades with more LDPC iterations for both CPU and GPU, with the GPU sustaining a ~6× lead.
-- `fig_ldpc_throughput_vs_codewords.png` — throughput vs. `$N_{cw}$` in the dense regime, showing a stable ~6× gap.
+- `fig_ldpc_throughput_vs_codewords.png` — throughput vs. N<sub>cw</sub> in the dense regime, showing a stable ~6× gap.
 - `fig_ldpc_resource_utilization.png` — resource usage histograms during the sweep:
   - CPU usage clusters around a high-but-stable core-equivalent band during active decoding.
   - GPU utilization shows strong saturation during active samples, as expected for the dense regime.
@@ -112,14 +112,14 @@ Repository organization for dataset-manipulation utilities (originally designed 
 
 Lower-bound, tail-focused sweep:
 
-* `$N_{cw}$ ∈ {1, 2, 4, …, 1024}` (powers of two)
+* N<sub>cw</sub> ∈ {1, 2, 4, …, 1024} (powers of two)
 * Rural morphology proxy + p95/p99 tail studies
 
 Contains its own sweep driver (`sweep_ldpc_baseline.sh`) and a full artifact set (CSVs/logs/checkpoint/figures).
 
 ### `consolidated/`
 
-Auto-generated merge of baseline + dense datasets, intended as the **single source of truth** for end-to-end plotting and reporting across the full tested `$N_{cw}$` range.
+Auto-generated merge of baseline + dense datasets, intended as the **single source of truth** for end-to-end plotting and reporting across the full tested N<sub>cw</sub> range.
 
 ---
 
