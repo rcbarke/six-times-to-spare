@@ -3,7 +3,7 @@
 This subdirectory contains the **baseline (lower-bound) LDPC sweep** and its generated artifacts. The baseline sweep covers a smaller, power-of-two codeword range:
 
 - **Codewords:** `N_cw ∈ {1, 2, 4, …, 1024}`
-- **Purpose:** characterize **rural morphologies** and emphasize **p95/p99 tail behavior** (latency/throughput/resource utilization under lighter batching).
+- **Purpose:** characterize **rural morphologies** and loosely characterize **p95 tail behavior** (latency/throughput/resource utilization under lighter batching). This dataset can't make p99 claims since it is measured offline, does not fully model RAN timing, and each data point is a stored average across ten runs. We'd need per-batch sampling fully online to measure p99.
 
 The baseline artifacts intentionally share the **same naming convention** as the top-level (dense/urban) sweep outputs so they can be combined later into a single unified dataset.
 
@@ -85,6 +85,6 @@ This writes merged artifacts to:
 
 ## Intent
 
-* **Baseline sweep (`baseline/`)**: lower-bound batching, rural morphology proxy, tail studies (p95/p99 emphasis).
+* **Baseline sweep (`baseline/`)**: lower-bound batching, rural morphology proxy, tail studies (p95 emphasis).
 * **Top-level sweep (repo root)**: dense batching, urban morphology proxy, saturation/upper-envelope behavior.
 * **Consolidated dataset (`consolidated/`)**: unified view across the full `N_cw` range for end-to-end plots and reporting.
