@@ -5,7 +5,7 @@ This repository contains a reproducible LDPC5G decoding microbenchmark and artif
 At a high level:
 
 - **Top-level sweep (dense / urban proxy):** large N<sub>cw</sub> sweep to stress batch parallelism and expose the upper throughput envelope.
-- **`baseline/` sweep (rural / tail proxy):** lower-bound N<sub>cw</sub> ∈ {1, 2, 4, …, 1024} sweep designed for p95/p99 tail interpretation.
+- **`baseline/` sweep (rural / tail proxy):** lower-bound N<sub>cw</sub> ∈ {1, 2, 4, …, 1024} sweep designed for loose p95 tail interpretation.
 - **`consolidated/` dataset:** auto-generated merge of baseline + dense artifacts spanning the full tested N<sub>cw</sub> range.
 
 ---
@@ -113,7 +113,7 @@ Repository organization for dataset-manipulation utilities (originally designed 
 Lower-bound, tail-focused sweep:
 
 * N<sub>cw</sub> ∈ {1, 2, 4, …, 1024} (powers of two)
-* Rural morphology proxy + p95/p99 tail studies
+* Rural morphology proxy + loose p95 tail studies
 
 Contains its own sweep driver (`sweep_ldpc_baseline.sh`) and a full artifact set (CSVs/logs/checkpoint/figures).
 
