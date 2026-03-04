@@ -321,8 +321,8 @@ def main(argv: Optional[List[str]] = None) -> int:
     )
     ap.add_argument(
         "--out-subdir",
-        default="consolidated",
-        help='Output subdirectory relative to repo root (default: "consolidated").',
+        default="dgx-spark",
+        help='Output subdirectory relative to repo root (default: "dgx-spark").',
     )
     ap.add_argument(
         "--quiet",

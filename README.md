@@ -67,8 +67,20 @@ Key plots (generated artifacts):
 │   ├── ldpc_sionna_spark.csv
 │   └── gpu_ldpc_sweep_stats.csv
 │
-└── consolidated/
+├── i9-14900K-rtx-4090/
+│   ├── README.md
+│   ├── sweep_ldpc_cumulative.sh
+│   ├── fig_ldpc_resource_utilization.png
+│   ├── fig_ldpc_throughput_vs_codewords.png
+│   ├── fig_ldpc_throughput_vs_iter.png
+│   ├── pid_ldpc_sweep_stats.log
+│   ├── ldpc_sionna_spark.checkpoint
+│   ├── ldpc_sionna_spark.csv
+│   └── gpu_ldpc_sweep_stats.csv
+|
+└── dgx-spark/
     ├── README.md
+    ├── sweep_ldpc_cumulative.sh
     ├── fig_ldpc_resource_utilization.png
     ├── fig_ldpc_throughput_vs_codewords.png
     ├── fig_ldpc_throughput_vs_iter.png

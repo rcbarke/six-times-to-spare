@@ -18,7 +18,7 @@ Aggregates dataset artifacts from:
 - the `baseline/` subdirectory (lower-bound / “rural morphology” sweep artifacts, useful for p95/p99 tail studies),
 
 into a single consolidated dataset spanning the full `N_cw` range (e.g., `{1 … 20480}`), writing merged artifacts to:
-- `consolidated/` (relative to the repository root)
+- `dgx-spark/` (relative to the repository root)
 
 Typical behavior:
 - Merges CSV artifacts by concatenation + de-duplication (and sorting where possible).
