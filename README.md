@@ -333,13 +333,13 @@ This repo supports a **compute characterization** of the LDPC kernel:
 
 If you use this repository, please cite the paper draft:
 
-> Ryan Barker, Julia Boone, Tolunay Seyfi, Alireza Ebrahimi Dorcheh, Fatemeh Afghah,
+> Ryan Barker, Julia Boone, Tolunay Seyfi, Alireza Ebrahimi Dorcheh, Fatemeh Afghah, Joseph Boccuzzi,
 > “Six Times to Spare: Characterizing GPU-Accelerated 5G LDPC Decoding for Edge-RSU Communications.”
 
 ```bibtex
 @unpublished{barker_six_times_to_spare,
   title   = {Six Times to Spare: Characterizing GPU-Accelerated 5G LDPC Decoding for Edge-RSU Communications},
-  author  = {Barker, Ryan and Boone, Julia and Seyfi, Tolunay and Ebrahimi Dorcheh, Alireza and Afghah, Fatemeh},
+  author  = {Barker, Ryan and Boone, Julia and Seyfi, Tolunay and Ebrahimi Dorcheh, Alireza, Afghah, Fatemeh, and Boccuzzi, Joseph},
   note    = {Paper draft},
   year    = {2026}
 }
