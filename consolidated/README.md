@@ -10,7 +10,7 @@ The goal of `consolidated/` is to provide a **single, merge-compatible dataset**
    - Dense/urban morphology proxy (large codeword sweep)
 
 2) **`baseline/` sweep artifacts**  
-   - Lower-bound/rural morphology proxy (tail-focused sweep, `N_cw ∈ {1 … 1024}` in powers of two)
+   - Lower-bound/rural morphology proxy (loose p95 tail-focused sweep, `N_cw ∈ {1 … 1024}` in powers of two)
 
 Once the baseline sweep completes, re-running the aggregator produces a consolidated dataset that covers the **full codeword range** end-to-end (e.g., `N_cw ∈ {1 … 20480}` depending on the dense sweep maximum).
 
@@ -74,7 +74,7 @@ The consolidated directory mirrors the standard artifact naming convention used 
 Use the consolidated dataset when you want:
 
 * a single set of plots spanning baseline + dense regimes,
-* consistent p95/p99 tail interpretation across the low-`N_cw` region alongside saturation behavior at high `N_cw`,
+* consistent, loose p95 tail interpretation across the low-`N_cw` region alongside saturation behavior at high `N_cw`,
 * a clean input for any downstream plotting/reporting pipeline (rather than manually stitching datasets).
 
 If you only care about tail behavior, work directly from `baseline/`. If you only care about saturation behavior in dense regimes, work from the top-level artifacts. For end-to-end reporting, use `consolidated/`.
