@@ -8,9 +8,9 @@ CHECKPOINT="ldpc_sionna_spark.checkpoint"
 GPU_MON_CSV="gpu_ldpc_sweep_stats.csv"
 PIDSTAT_LOG="pid_ldpc_sweep_stats.log"
 
-# 10 values of num_codewords >= 2048 (dense urban/edge)
+# Full 21 value range of num_codewords 
 NUM_CODEWORDS_VALUES=(
-  2048 4096 6144 8192 10240 12288 14336 16384 18432 20480
+  1 2 4 8 16 32 64 128 256 512 1024 2048 4096 6144 8192 10240 12288 14336 16384 18432 20480
 )
 
 # 10 values of num_iter (belief propagations)

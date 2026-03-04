@@ -279,7 +279,7 @@ This produces (or appends to):
 
 #### 2) Additional telemetry
 
-The sweep script will log raw LDPC timing statistics. For full reproducibility, we recommend running system-level resource utilization metrics across two additional terminals:
+The sweep script will log raw LDPC timing statistics as well as the following system-level resource utilization metrics:
 
 **GPU telemetry:**
 
