@@ -252,8 +252,8 @@ def plot_resource_utilization(
 
 def main() -> None:
     ldpc_df = load_ldpc_results("ldpc_sionna_cots.csv")
-    #gpu_df = load_gpu_stats("gpu_ldpc_sweep_stats.csv")
-    #cpu_df = load_cpu_stats("pid_ldpc_sweep_stats.log", date_str="2025-11-29")
+    gpu_df = load_gpu_stats("gpu_ldpc_sweep_stats.csv")
+    cpu_df = load_cpu_stats("pid_ldpc_sweep_stats.log", date_str="2025-11-29")
 
     # Figure 1: throughput vs iterations
     plot_throughput_vs_iter(ldpc_df, "fig_ldpc_throughput_vs_iter.png")
@@ -262,25 +262,25 @@ def main() -> None:
     plot_throughput_vs_codewords(ldpc_df, "fig_ldpc_throughput_vs_codewords.png")
 
     # Figure 3: CPU vs GPU utilization histograms
-    #plot_resource_utilization(
-    #    gpu_df,
-    #    cpu_df,
-    #    "fig_ldpc_resource_utilization.png",
-    #)
+    plot_resource_utilization(
+        gpu_df,
+        cpu_df,
+        "fig_ldpc_resource_utilization.png",
+    )
 
     # Optional: print a concise summary to stdout
     avg_speedup = ldpc_df["speedup"].mean()
     print(f"Average GPU/CPU throughput speedup over all configs: {avg_speedup:.2f}×")
 
-    #cpu_mean_cores = cpu_df["cpu_cores"].mean()
-    #print(f"Mean cores used by LDPC python3 process: {cpu_mean_cores:.1f} / 20")
+    cpu_mean_cores = cpu_df["cpu_cores"].mean()
+    print(f"Mean cores used by LDPC python3 process: {cpu_mean_cores:.1f} / 20")
 
-    #gpu_active = gpu_df[gpu_df["utilization.gpu [%]"] > 5]
-    #print(
-    #    "GPU active-period stats: "
-    #    f"mean util={gpu_active['utilization.gpu [%]'].mean():.1f}%, "
-    #    f"mean power={gpu_active['power.draw [W]'].mean():.2f} W"
-    #)
+    gpu_active = gpu_df[gpu_df["utilization.gpu [%]"] > 5]
+    print(
+        "GPU active-period stats: "
+        f"mean util={gpu_active['utilization.gpu [%]'].mean():.1f}%, "
+        f"mean power={gpu_active['power.draw [W]'].mean():.2f} W"
+    )
 
 
 if __name__ == "__main__":
