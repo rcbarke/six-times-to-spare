@@ -1,0 +1,19 @@
+-[0000:00]-+-00.0  Intel Corporation Device a700
+           +-01.0-[01]--+-00.0  NVIDIA Corporation AD102 [GeForce RTX 4090]
+           |            \-00.1  NVIDIA Corporation AD102 High Definition Audio Controller
+           +-02.0  Intel Corporation Raptor Lake-S GT1 [UHD Graphics 770]
+           +-04.0  Intel Corporation Raptor Lake Dynamic Platform and Thermal Framework Processor Participant
+           +-06.0-[03]----00.0  Samsung Electronics Co Ltd NVMe SSD Controller S4LV008[Pascal]
+           +-08.0  Intel Corporation GNA Scoring Accelerator module
+           +-14.0  Intel Corporation Alder Lake-S PCH USB 3.2 Gen 2x2 XHCI Controller
+           +-14.2  Intel Corporation Alder Lake-S PCH Shared SRAM
+           +-15.0  Intel Corporation Alder Lake-S PCH Serial IO I2C Controller #0
+           +-16.0  Intel Corporation Alder Lake-S PCH HECI Controller #1
+           +-16.3  Intel Corporation Device 7aeb
+           +-17.0  Intel Corporation Alder Lake-S PCH SATA Controller [AHCI Mode]
+           +-1c.0-[04]----00.0  Realtek Semiconductor Co., Ltd. RTS525A PCI Express Card Reader
+           +-1f.0  Intel Corporation Device 7a88
+           +-1f.3  Intel Corporation Alder Lake-S HD Audio Controller
+           +-1f.4  Intel Corporation Alder Lake-S PCH SMBus Controller
+           +-1f.5  Intel Corporation Alder Lake-S PCH SPI Controller
+           \-1f.6  Intel Corporation Ethernet Connection (17) I219-LM

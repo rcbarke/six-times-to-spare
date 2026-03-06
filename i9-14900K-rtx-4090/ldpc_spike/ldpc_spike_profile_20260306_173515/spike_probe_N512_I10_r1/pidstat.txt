@@ -1,0 +1,12 @@
+Linux 6.17.0-14-generic (IS-WiN-PC14) 	03/06/2026 	_x86_64_	(32 CPU)
+
+# Time        UID       PID    %usr %system  %guest   %wait    %CPU   CPU  minflt/s  majflt/s     VSZ     RSS   %MEM   kB_rd/s   kB_wr/s kB_ccwr/s iodelay  Command
+05:35:22 PM  1000    188194  335.00   34.00    0.00    0.00  369.00     6 240583.00      0.00 40659464 1723940   2.63      0.00    296.00    208.00       0  python3
+
+# Time        UID       PID    %usr %system  %guest   %wait    %CPU   CPU  minflt/s  majflt/s     VSZ     RSS   %MEM   kB_rd/s   kB_wr/s kB_ccwr/s iodelay  Command
+05:35:23 PM  1000    188194  104.00    3.00    0.00    0.00  107.00     6   9055.00      0.00 40644856 1754628   2.68      0.00    552.00    424.00       0  python3
+
+# Time        UID       PID    %usr %system  %guest   %wait    %CPU   CPU  minflt/s  majflt/s     VSZ     RSS   %MEM   kB_rd/s   kB_wr/s kB_ccwr/s iodelay  Command
+05:35:24 PM  1000    188194 1145.00   34.00    0.00    0.00 1179.00     4  51345.00      0.00 41308808 1930144   2.95      0.00    508.00    212.00       0  python3
+
+# Time        UID       PID    %usr %system  %guest   %wait    %CPU   CPU  minflt/s  majflt/s     VSZ     RSS   %MEM   kB_rd/s   kB_wr/s kB_ccwr/s iodelay  Command

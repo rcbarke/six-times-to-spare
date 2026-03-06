@@ -1,0 +1,16 @@
+01:00.0 VGA compatible controller: NVIDIA Corporation AD102 [GeForce RTX 4090] (rev a1) (prog-if 00 [VGA controller])
+	Subsystem: Dell AD102 [GeForce RTX 4090]
+	Control: I/O+ Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr- Stepping- SERR- FastB2B- DisINTx+
+	Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort- <TAbort- <MAbort- >SERR- <PERR- INTx-
+	Latency: 0
+	Interrupt: pin A routed to IRQ 154
+	IOMMU group: 12
+	Region 0: Memory at 71000000 (32-bit, non-prefetchable) [size=16M]
+	Region 1: Memory at 60e0000000 (64-bit, prefetchable) [size=256M]
+	Region 3: Memory at 60f0000000 (64-bit, prefetchable) [size=32M]
+	Region 5: I/O ports at 3000 [size=128]
+	Expansion ROM at 72080000 [virtual] [disabled] [size=512K]
+	Capabilities: <access denied>
+	Kernel driver in use: nvidia
+	Kernel modules: nvidiafb, nouveau, nvidia_drm, nvidia
+

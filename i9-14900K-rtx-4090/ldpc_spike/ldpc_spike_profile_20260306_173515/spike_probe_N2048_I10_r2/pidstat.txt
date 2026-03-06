@@ -1,0 +1,21 @@
+Linux 6.17.0-14-generic (IS-WiN-PC14) 	03/06/2026 	_x86_64_	(32 CPU)
+
+# Time        UID       PID    %usr %system  %guest   %wait    %CPU   CPU  minflt/s  majflt/s     VSZ     RSS   %MEM   kB_rd/s   kB_wr/s kB_ccwr/s iodelay  Command
+05:36:57 PM  1000    194899  330.00   33.00    0.00    0.00  363.00     5 238604.00      0.00 40687088 1707752   2.61      0.00    280.00    208.00       0  python3
+
+# Time        UID       PID    %usr %system  %guest   %wait    %CPU   CPU  minflt/s  majflt/s     VSZ     RSS   %MEM   kB_rd/s   kB_wr/s kB_ccwr/s iodelay  Command
+05:36:58 PM  1000    194899  103.00    5.00    0.00    0.00  108.00     7  16581.00      0.00 40785016 1785292   2.72      0.00    508.00    424.00       0  python3
+
+# Time        UID       PID    %usr %system  %guest   %wait    %CPU   CPU  minflt/s  majflt/s     VSZ     RSS   %MEM   kB_rd/s   kB_wr/s kB_ccwr/s iodelay  Command
+05:36:59 PM  1000    194899 1798.02   23.76    0.00    0.00 1821.78     7  70575.25      0.00 41321420 2050640   3.13      0.00    205.94      0.00       0  python3
+
+# Time        UID       PID    %usr %system  %guest   %wait    %CPU   CPU  minflt/s  majflt/s     VSZ     RSS   %MEM   kB_rd/s   kB_wr/s kB_ccwr/s iodelay  Command
+05:37:00 PM  1000    194899 2699.00   13.00    0.00    0.00 2712.00     7    242.00      0.00 41321420 2051408   3.13      0.00      0.00      0.00       0  python3
+
+# Time        UID       PID    %usr %system  %guest   %wait    %CPU   CPU  minflt/s  majflt/s     VSZ     RSS   %MEM   kB_rd/s   kB_wr/s kB_ccwr/s iodelay  Command
+05:37:01 PM  1000    194899 2731.00   13.00    0.00    0.00 2744.00     7   2650.00      0.00 41321420 2062160   3.15      0.00      0.00      0.00       0  python3
+
+# Time        UID       PID    %usr %system  %guest   %wait    %CPU   CPU  minflt/s  majflt/s     VSZ     RSS   %MEM   kB_rd/s   kB_wr/s kB_ccwr/s iodelay  Command
+05:37:02 PM  1000    194899 2011.00   14.00    0.00    0.00 2025.00     4  21412.00      0.00 41899964 2152840   3.29      0.00    324.00    176.00       0  python3
+
+# Time        UID       PID    %usr %system  %guest   %wait    %CPU   CPU  minflt/s  majflt/s     VSZ     RSS   %MEM   kB_rd/s   kB_wr/s kB_ccwr/s iodelay  Command

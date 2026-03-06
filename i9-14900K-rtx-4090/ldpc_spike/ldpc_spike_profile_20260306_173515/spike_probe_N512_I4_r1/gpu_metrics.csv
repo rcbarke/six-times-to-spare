@@ -1,0 +1,18 @@
+timestamp, index, name, pstate, power.draw [W], temperature.gpu, clocks.current.sm [MHz], clocks.current.memory [MHz], utilization.gpu [%], utilization.memory [%], memory.used [MiB], memory.total [MiB], pcie.link.gen.current, pcie.link.gen.max, pcie.link.width.current, pcie.link.width.max
+2026/03/06 17:35:16.184, 0, NVIDIA GeForce RTX 4090, P8, 19.80 W, 38, 210 MHz, 405 MHz, 0 %, 1 %, 392 MiB, 24564 MiB, 1, 4, 16, 16
+2026/03/06 17:35:16.389, 0, NVIDIA GeForce RTX 4090, P8, 19.80 W, 38, 210 MHz, 405 MHz, 0 %, 1 %, 382 MiB, 24564 MiB, 1, 4, 16, 16
+2026/03/06 17:35:16.590, 0, NVIDIA GeForce RTX 4090, P8, 19.80 W, 38, 210 MHz, 405 MHz, 0 %, 1 %, 435 MiB, 24564 MiB, 1, 4, 16, 16
+2026/03/06 17:35:16.791, 0, NVIDIA GeForce RTX 4090, P8, 19.80 W, 38, 210 MHz, 405 MHz, 0 %, 1 %, 22519 MiB, 24564 MiB, 1, 4, 16, 16
+2026/03/06 17:35:16.991, 0, NVIDIA GeForce RTX 4090, P2, 33.85 W, 39, 2520 MHz, 10251 MHz, 1 %, 0 %, 22521 MiB, 24564 MiB, 4, 4, 16, 16
+2026/03/06 17:35:17.191, 0, NVIDIA GeForce RTX 4090, P2, 33.85 W, 39, 2520 MHz, 10251 MHz, 1 %, 0 %, 22548 MiB, 24564 MiB, 4, 4, 16, 16
+2026/03/06 17:35:17.392, 0, NVIDIA GeForce RTX 4090, P2, 33.85 W, 39, 2520 MHz, 10251 MHz, 1 %, 0 %, 22545 MiB, 24564 MiB, 4, 4, 16, 16
+2026/03/06 17:35:17.592, 0, NVIDIA GeForce RTX 4090, P2, 52.76 W, 39, 2520 MHz, 10251 MHz, 0 %, 0 %, 22545 MiB, 24564 MiB, 4, 4, 16, 16
+2026/03/06 17:35:17.792, 0, NVIDIA GeForce RTX 4090, P2, 52.76 W, 39, 2520 MHz, 10251 MHz, 0 %, 0 %, 22545 MiB, 24564 MiB, 4, 4, 16, 16
+2026/03/06 17:35:17.992, 0, NVIDIA GeForce RTX 4090, P2, 60.75 W, 39, 2520 MHz, 10251 MHz, 1 %, 0 %, 22545 MiB, 24564 MiB, 4, 4, 16, 16
+2026/03/06 17:35:18.192, 0, NVIDIA GeForce RTX 4090, P2, 60.75 W, 39, 2520 MHz, 10251 MHz, 1 %, 0 %, 22550 MiB, 24564 MiB, 4, 4, 16, 16
+2026/03/06 17:35:18.393, 0, NVIDIA GeForce RTX 4090, P2, 60.75 W, 39, 2520 MHz, 10251 MHz, 1 %, 0 %, 22543 MiB, 24564 MiB, 4, 4, 16, 16
+2026/03/06 17:35:18.593, 0, NVIDIA GeForce RTX 4090, P2, 61.12 W, 40, 2520 MHz, 10251 MHz, 2 %, 0 %, 22543 MiB, 24564 MiB, 4, 4, 16, 16
+2026/03/06 17:35:18.793, 0, NVIDIA GeForce RTX 4090, P2, 61.12 W, 40, 2520 MHz, 10251 MHz, 2 %, 0 %, 22543 MiB, 24564 MiB, 4, 4, 16, 16
+2026/03/06 17:35:18.993, 0, NVIDIA GeForce RTX 4090, P2, 60.96 W, 40, 2520 MHz, 10251 MHz, 1 %, 0 %, 22543 MiB, 24564 MiB, 4, 4, 16, 16
+2026/03/06 17:35:19.193, 0, NVIDIA GeForce RTX 4090, P2, 60.96 W, 40, 2520 MHz, 10251 MHz, 1 %, 0 %, 22543 MiB, 24564 MiB, 4, 4, 16, 16
+2026/03/06 17:35:19.394, 0, NVIDIA GeForce RTX 4090, P2, 60.96 W, 40, 2520 MHz, 10251 MHz, 1 %, 0 %, 22542 MiB, 24564 MiB, 4, 4, 16, 16

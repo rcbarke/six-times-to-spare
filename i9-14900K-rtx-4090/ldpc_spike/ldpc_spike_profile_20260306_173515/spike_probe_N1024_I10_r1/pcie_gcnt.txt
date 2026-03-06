@@ -1,0 +1,24 @@
+===== 2026-03-06T17:35:36-05:00 =====
+GPU 0: NVIDIA GeForce RTX 4090 (UUID: GPU-c52e8436-d558-906b-69c6-c50f07c94cf2)
+    TX_BYTES:                1336714856
+    RX_BYTES:                3416240304
+===== 2026-03-06T17:35:37-05:00 =====
+GPU 0: NVIDIA GeForce RTX 4090 (UUID: GPU-c52e8436-d558-906b-69c6-c50f07c94cf2)
+    TX_BYTES:                1347919856
+    RX_BYTES:                3427178304
+===== 2026-03-06T17:35:38-05:00 =====
+GPU 0: NVIDIA GeForce RTX 4090 (UUID: GPU-c52e8436-d558-906b-69c6-c50f07c94cf2)
+    TX_BYTES:                1369659856
+    RX_BYTES:                3441082304
+===== 2026-03-06T17:35:39-05:00 =====
+GPU 0: NVIDIA GeForce RTX 4090 (UUID: GPU-c52e8436-d558-906b-69c6-c50f07c94cf2)
+    TX_BYTES:                1377063856
+    RX_BYTES:                3444012304
+===== 2026-03-06T17:35:40-05:00 =====
+GPU 0: NVIDIA GeForce RTX 4090 (UUID: GPU-c52e8436-d558-906b-69c6-c50f07c94cf2)
+    TX_BYTES:                1391737856
+    RX_BYTES:                3496321304
+===== 2026-03-06T17:35:41-05:00 =====
+GPU 0: NVIDIA GeForce RTX 4090 (UUID: GPU-c52e8436-d558-906b-69c6-c50f07c94cf2)
+    TX_BYTES:                1394190856
+    RX_BYTES:                3500261304

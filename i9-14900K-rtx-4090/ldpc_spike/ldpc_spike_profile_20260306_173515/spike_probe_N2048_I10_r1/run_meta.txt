@@ -1,0 +1,9 @@
+timestamp=2026-03-06T17:35:55-05:00
+hostname=IS-WiN-PC14
+kernel=Linux IS-WiN-PC14 6.17.0-14-generic #14~24.04.1-Ubuntu SMP PREEMPT_DYNAMIC Thu Jan 15 15:52:10 UTC 2 x86_64 x86_64 x86_64 GNU/Linux
+gpu_index=0
+gpu_bus_id=00000000:01:00.0
+gpu_uuid=GPU-c52e8436-d558-906b-69c6-c50f07c94cf2
+bench_py=./ldpc_cpu_gpu_benchmark.py
+ebno_db=4.0
+inner_repeat=10

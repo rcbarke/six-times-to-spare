@@ -1,0 +1,44 @@
+===== 2026-03-06T17:37:04-05:00 =====
+GPU 0: NVIDIA GeForce RTX 4090 (UUID: GPU-c52e8436-d558-906b-69c6-c50f07c94cf2)
+    TX_BYTES:                2405198856
+    RX_BYTES:                908387008
+===== 2026-03-06T17:37:05-05:00 =====
+GPU 0: NVIDIA GeForce RTX 4090 (UUID: GPU-c52e8436-d558-906b-69c6-c50f07c94cf2)
+    TX_BYTES:                2416567856
+    RX_BYTES:                921480008
+===== 2026-03-06T17:37:06-05:00 =====
+GPU 0: NVIDIA GeForce RTX 4090 (UUID: GPU-c52e8436-d558-906b-69c6-c50f07c94cf2)
+    TX_BYTES:                2463486856
+    RX_BYTES:                953917008
+===== 2026-03-06T17:37:07-05:00 =====
+GPU 0: NVIDIA GeForce RTX 4090 (UUID: GPU-c52e8436-d558-906b-69c6-c50f07c94cf2)
+    TX_BYTES:                2470145856
+    RX_BYTES:                963958008
+===== 2026-03-06T17:37:08-05:00 =====
+GPU 0: NVIDIA GeForce RTX 4090 (UUID: GPU-c52e8436-d558-906b-69c6-c50f07c94cf2)
+    TX_BYTES:                2474256856
+    RX_BYTES:                969673008
+===== 2026-03-06T17:37:09-05:00 =====
+GPU 0: NVIDIA GeForce RTX 4090 (UUID: GPU-c52e8436-d558-906b-69c6-c50f07c94cf2)
+    TX_BYTES:                2479159856
+    RX_BYTES:                974800008
+===== 2026-03-06T17:37:10-05:00 =====
+GPU 0: NVIDIA GeForce RTX 4090 (UUID: GPU-c52e8436-d558-906b-69c6-c50f07c94cf2)
+    TX_BYTES:                2485721856
+    RX_BYTES:                982188008
+===== 2026-03-06T17:37:11-05:00 =====
+GPU 0: NVIDIA GeForce RTX 4090 (UUID: GPU-c52e8436-d558-906b-69c6-c50f07c94cf2)
+    TX_BYTES:                2490559856
+    RX_BYTES:                987919008
+===== 2026-03-06T17:37:12-05:00 =====
+GPU 0: NVIDIA GeForce RTX 4090 (UUID: GPU-c52e8436-d558-906b-69c6-c50f07c94cf2)
+    TX_BYTES:                2496071856
+    RX_BYTES:                994274008
+===== 2026-03-06T17:37:13-05:00 =====
+GPU 0: NVIDIA GeForce RTX 4090 (UUID: GPU-c52e8436-d558-906b-69c6-c50f07c94cf2)
+    TX_BYTES:                2503374856
+    RX_BYTES:                1048384008
+===== 2026-03-06T17:37:14-05:00 =====
+GPU 0: NVIDIA GeForce RTX 4090 (UUID: GPU-c52e8436-d558-906b-69c6-c50f07c94cf2)
+    TX_BYTES:                2526748856
+    RX_BYTES:                1104228008

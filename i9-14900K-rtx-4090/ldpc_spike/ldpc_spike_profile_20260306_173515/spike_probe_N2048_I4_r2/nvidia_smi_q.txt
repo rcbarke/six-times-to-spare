@@ -1,0 +1,145 @@
+
+==============NVSMI LOG==============
+
+Timestamp                                              : Fri Mar  6 17:36:49 2026
+Driver Version                                         : 590.48.01
+CUDA Version                                           : 13.1
+
+Attached GPUs                                          : 1
+GPU 00000000:01:00.0
+    Performance State                                  : P0
+    Clocks Event Reasons
+        Idle                                           : Not Active
+        Applications Clocks Setting                    : Not Active
+        SW Power Cap                                   : Not Active
+        HW Slowdown                                    : Not Active
+            HW Thermal Slowdown                        : Not Active
+            HW Power Brake Slowdown                    : Not Active
+        Sync Boost                                     : Not Active
+        SW Thermal Slowdown                            : Not Active
+        Display Clock Setting                          : Not Active
+    Clocks Event Reasons Counters
+        SW Power Capping                               : 0 us
+        Sync Boost                                     : 0 us
+        SW Thermal Slowdown                            : 0 us
+        HW Thermal Slowdown                            : 0 us
+        HW Power Braking                               : 0 us
+    Sparse Operation Mode                              : N/A
+    FB Memory Usage
+        Total                                          : 24564 MiB
+        Reserved                                       : 491 MiB
+        Used                                           : 410 MiB
+        Free                                           : 23665 MiB
+    BAR1 Memory Usage
+        Total                                          : 256 MiB
+        Used                                           : 13 MiB
+        Free                                           : 243 MiB
+    Conf Compute Protected Memory Usage
+        Total                                          : 0 MiB
+        Used                                           : 0 MiB
+        Free                                           : 0 MiB
+    Utilization
+        GPU                                            : 100 %
+        Memory                                         : 8 %
+        Encoder                                        : 0 %
+        Decoder                                        : 0 %
+        JPEG                                           : 0 %
+        OFA                                            : 0 %
+    GPU Utilization Samples
+        Duration                                       : 14.00 sec
+        Number of Samples                              : 71
+        Max                                            : 100 %
+        Min                                            : 0 %
+        Avg                                            : 10 %
+    Memory Utilization Samples
+        Duration                                       : 14.00 sec
+        Number of Samples                              : 71
+        Max                                            : 29 %
+        Min                                            : 0 %
+        Avg                                            : 1 %
+    ENC Utilization Samples
+        Duration                                       : 14.00 sec
+        Number of Samples                              : 71
+        Max                                            : 0 %
+        Min                                            : 0 %
+        Avg                                            : 0 %
+    DEC Utilization Samples
+        Duration                                       : 14.00 sec
+        Number of Samples                              : 71
+        Max                                            : 0 %
+        Min                                            : 0 %
+        Avg                                            : 0 %
+    JPG Utilization Samples
+        Duration                                       : 14.00 sec
+        Number of Samples                              : 71
+        Max                                            : 0 %
+        Min                                            : 0 %
+        Avg                                            : 0 %
+    OFA Utilization Samples
+        Duration                                       : 14.00 sec
+        Number of Samples                              : 71
+        Max                                            : 0 %
+        Min                                            : 0 %
+        Avg                                            : 0 %
+    GPU Power Readings
+        Average Power Draw                             : 94.42 W
+        Instantaneous Power Draw                       : 80.33 W
+        Current Power Limit                            : 450.00 W
+        Requested Power Limit                          : 450.00 W
+        Default Power Limit                            : 450.00 W
+        Min Power Limit                                : 150.00 W
+        Max Power Limit                                : 450.00 W
+    Power Samples
+        Duration                                       : 2.36 sec
+        Number of Samples                              : 119
+        Max                                            : 205.66 W
+        Min                                            : 58.87 W
+        Avg                                            : 76.34 W
+    GPU Memory Power Readings 
+        Average Power Draw                             : N/A
+        Instantaneous Power Draw                       : N/A
+    Module Power Readings
+        Average Power Draw                             : N/A
+        Instantaneous Power Draw                       : N/A
+        Current Power Limit                            : N/A
+        Requested Power Limit                          : N/A
+        Default Power Limit                            : N/A
+        Min Power Limit                                : N/A
+        Max Power Limit                                : N/A
+    EDPp Multiplier                                    : N/A
+    Clocks
+        Graphics                                       : 2730 MHz
+        SM                                             : 2730 MHz
+        Memory                                         : 10501 MHz
+        Video                                          : 2115 MHz
+    Applications Clocks
+        Graphics                                       : Requested functionality has been deprecated
+        Memory                                         : Requested functionality has been deprecated
+    Default Applications Clocks
+        Graphics                                       : Requested functionality has been deprecated
+        Memory                                         : Requested functionality has been deprecated
+    Deferred Clocks
+        Memory                                         : N/A
+    Max Clocks
+        Graphics                                       : 3105 MHz
+        SM                                             : 3105 MHz
+        Memory                                         : 10501 MHz
+        Video                                          : 2415 MHz
+    Max Customer Boost Clocks
+        Graphics                                       : N/A
+    SM Clock Samples
+        Duration                                       : Not Found
+        Number of Samples                              : Not Found
+        Max                                            : Not Found
+        Min                                            : Not Found
+        Avg                                            : Not Found
+    Memory Clock Samples
+        Duration                                       : Not Found
+        Number of Samples                              : Not Found
+        Max                                            : Not Found
+        Min                                            : Not Found
+        Avg                                            : Not Found
+    Clock Policy
+        Auto Boost                                     : N/A
+        Auto Boost Default                             : N/A
+

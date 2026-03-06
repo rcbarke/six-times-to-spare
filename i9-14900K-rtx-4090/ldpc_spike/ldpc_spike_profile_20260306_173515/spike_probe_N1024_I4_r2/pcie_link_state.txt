@@ -1,0 +1,12 @@
+===== 2026-03-06T17:36:31-05:00 =====
+index, name, pci.bus_id, pstate, pcie.link.gen.current, pcie.link.gen.max, pcie.link.width.current, pcie.link.width.max
+0, NVIDIA GeForce RTX 4090, 00000000:01:00.0, P0, 4, 4, 16, 16
+===== 2026-03-06T17:36:32-05:00 =====
+index, name, pci.bus_id, pstate, pcie.link.gen.current, pcie.link.gen.max, pcie.link.width.current, pcie.link.width.max
+0, NVIDIA GeForce RTX 4090, 00000000:01:00.0, P2, 4, 4, 16, 16
+===== 2026-03-06T17:36:33-05:00 =====
+index, name, pci.bus_id, pstate, pcie.link.gen.current, pcie.link.gen.max, pcie.link.width.current, pcie.link.width.max
+0, NVIDIA GeForce RTX 4090, 00000000:01:00.0, P2, 4, 4, 16, 16
+===== 2026-03-06T17:36:34-05:00 =====
+index, name, pci.bus_id, pstate, pcie.link.gen.current, pcie.link.gen.max, pcie.link.width.current, pcie.link.width.max
+0, NVIDIA GeForce RTX 4090, 00000000:01:00.0, P2, 4, 4, 16, 16
