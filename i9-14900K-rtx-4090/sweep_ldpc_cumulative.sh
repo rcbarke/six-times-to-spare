@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-CSV="ldpc_sionna_spark.csv"
-CHECKPOINT="ldpc_sionna_spark.checkpoint"
+CSV="ldpc_sionna_cots.csv"
+CHECKPOINT="ldpc_sionna_cots.checkpoint"
 
 # Monitor outputs (as requested)
 GPU_MON_CSV="gpu_ldpc_sweep_stats.csv"
@@ -44,20 +44,19 @@ cleanup() {
 trap cleanup EXIT INT TERM
 
 start_monitors() {
-  # Truncate outputs each fresh run (change to >> if you prefer appending)
-  : > "${GPU_MON_CSV}"
-  : > "${PIDSTAT_LOG}"
-
-  # GPU monitor (1 Hz)
-  # Note: nvidia-smi writes a CSV header; that's fine and helpful.
-  nvidia-smi --query-gpu=timestamp,utilization.gpu,power.draw --format=csv -l 1 \
-    > "${GPU_MON_CSV}" &
+  # Append across runs. For GPU CSV, only write the header on first creation.
+  if [ -f "${GPU_MON_CSV}" ] && [ -s "${GPU_MON_CSV}" ]; then
+    nvidia-smi --query-gpu=timestamp,utilization.gpu,power.draw --format=csv,noheader -l 1 \
+      >> "${GPU_MON_CSV}" &
+  else
+    nvidia-smi --query-gpu=timestamp,utilization.gpu,power.draw --format=csv -l 1 \
+      >> "${GPU_MON_CSV}" &
+  fi
   GPU_MON_PID=$!
   echo "Started GPU monitor (PID=${GPU_MON_PID}) -> ${GPU_MON_CSV}"
 
-  # CPU/process monitor (1 Hz)
-  # pidstat typically needs sysstat installed.
-  pidstat -u -p ALL 1 > "${PIDSTAT_LOG}" &
+  # Append pidstat output across runs.
+  pidstat -u -p ALL 1 >> "${PIDSTAT_LOG}" &
   PIDSTAT_PID=$!
   echo "Started pidstat monitor (PID=${PIDSTAT_PID}) -> ${PIDSTAT_LOG}"
 }

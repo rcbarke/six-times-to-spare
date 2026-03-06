@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-Post-processing for DGX Spark LDPC sweep.
+Post-processing for COTS PC LDPC sweep.
 
 Assumes the following files are in the current directory:
-    - ldpc_sionna_spark.csv
+    - ldpc_sionna_cots.csv
     - gpu_ldpc_sweep_stats.csv
     - pid_ldpc_sweep_stats.log
 
@@ -24,7 +24,7 @@ import matplotlib.pyplot as plt
 # Helpers to load and preprocess the three data sources
 # ----------------------------------------------------------------------
 
-def load_ldpc_results(path: str = "ldpc_sionna_spark.csv") -> pd.DataFrame:
+def load_ldpc_results(path: str = "ldpc_sionna_cots.csv") -> pd.DataFrame:
     """Load main LDPC benchmark results."""
     df = pd.read_csv(path)
 
@@ -141,12 +141,12 @@ def plot_throughput_vs_iter(df: pd.DataFrame, out_path: str) -> None:
     )
 
     plt.figure(figsize=(6, 4))
-    plt.plot(agg["num_iter"], agg["cpu_thr"], marker="o", label="Grace CPU")
-    plt.plot(agg["num_iter"], agg["gpu_thr"], marker="o", label="GB10 GPU")
+    plt.plot(agg["num_iter"], agg["cpu_thr"], marker="o", label="i9-14900K CPU")
+    plt.plot(agg["num_iter"], agg["gpu_thr"], marker="o", label="RTX4090 GPU")
 
     plt.xlabel("LDPC decoder iterations (num_iter)")
     plt.ylabel("Throughput [Mbit/s]")
-    plt.title("LDPC5G throughput vs iterations on DGX Spark")
+    plt.title("LDPC5G throughput vs iterations on COTS PC")
     plt.grid(True, which="both", axis="both")
     plt.legend()
 
@@ -181,13 +181,13 @@ def plot_throughput_vs_codewords(df: pd.DataFrame, out_path: str) -> None:
     )
 
     plt.figure(figsize=(6, 4))
-    plt.plot(agg["num_codewords"], agg["cpu_thr"], marker="o", label="Grace CPU")
-    plt.plot(agg["num_codewords"], agg["gpu_thr"], marker="o", label="GB10 GPU")
+    plt.plot(agg["num_codewords"], agg["cpu_thr"], marker="o", label="i9-14900K CPU")
+    plt.plot(agg["num_codewords"], agg["gpu_thr"], marker="o", label="RTX4090 GPU")
 
     plt.xlabel("Number of codewords (N_cw)")
 
     plt.ylabel("Throughput [Mbit/s]")
-    plt.title("LDPC5G throughput vs N_cw on DGX Spark")
+    plt.title("LDPC5G throughput vs N_cw on COTS PC")
     plt.grid(True, which="both", axis="both")
     plt.legend()
 
@@ -226,20 +226,20 @@ def plot_resource_utilization(
 
     # CPU histogram (in units of "active cores")
     axes[0].hist(cpu_active["cpu_cores"], bins=20)
-    axes[0].set_xlabel("Approx. Grace CPU cores used\n(LDPC python3 process)")
+    axes[0].set_xlabel("Approx. i9-14900K CPU cores used\n(LDPC python3 process)")
     axes[0].set_ylabel("Count")
     axes[0].set_title("CPU utilization during LDPC sweep")
     axes[0].grid(True, axis="y")
 
     # GPU histogram (utilization percent)
     axes[1].hist(gpu_active["utilization.gpu [%]"], bins=20)
-    axes[1].set_xlabel("GB10 GPU utilization [%]\n(nvidia-smi, active samples)")
+    axes[1].set_xlabel("RTX4090 GPU utilization [%]\n(nvidia-smi, active samples)")
     axes[1].set_ylabel("Count")
     axes[1].set_title("GPU utilization during LDPC sweep")
     axes[1].grid(True, axis="y")
 
     # Put the suptitle inside the figure bounds and reserve some top space
-    fig.suptitle("Resource usage for LDPC5G decoding on DGX Spark", fontsize=12)
+    fig.suptitle("Resource usage for LDPC5G decoding on COTS PC", fontsize=12)
     # rect=[left, bottom, right, top] -> leave 7% headroom for the suptitle
     fig.tight_layout(rect=[0, 0, 1, 0.93])
 
@@ -251,9 +251,9 @@ def plot_resource_utilization(
 # ----------------------------------------------------------------------
 
 def main() -> None:
-    ldpc_df = load_ldpc_results("ldpc_sionna_spark.csv")
-    gpu_df = load_gpu_stats("gpu_ldpc_sweep_stats.csv")
-    cpu_df = load_cpu_stats("pid_ldpc_sweep_stats.log", date_str="2025-11-29")
+    ldpc_df = load_ldpc_results("ldpc_sionna_cots.csv")
+    #gpu_df = load_gpu_stats("gpu_ldpc_sweep_stats.csv")
+    #cpu_df = load_cpu_stats("pid_ldpc_sweep_stats.log", date_str="2025-11-29")
 
     # Figure 1: throughput vs iterations
     plot_throughput_vs_iter(ldpc_df, "fig_ldpc_throughput_vs_iter.png")
@@ -262,25 +262,25 @@ def main() -> None:
     plot_throughput_vs_codewords(ldpc_df, "fig_ldpc_throughput_vs_codewords.png")
 
     # Figure 3: CPU vs GPU utilization histograms
-    plot_resource_utilization(
-        gpu_df,
-        cpu_df,
-        "fig_ldpc_resource_utilization.png",
-    )
+    #plot_resource_utilization(
+    #    gpu_df,
+    #    cpu_df,
+    #    "fig_ldpc_resource_utilization.png",
+    #)
 
     # Optional: print a concise summary to stdout
     avg_speedup = ldpc_df["speedup"].mean()
     print(f"Average GPU/CPU throughput speedup over all configs: {avg_speedup:.2f}×")
 
-    cpu_mean_cores = cpu_df["cpu_cores"].mean()
-    print(f"Mean cores used by LDPC python3 process: {cpu_mean_cores:.1f} / 20")
+    #cpu_mean_cores = cpu_df["cpu_cores"].mean()
+    #print(f"Mean cores used by LDPC python3 process: {cpu_mean_cores:.1f} / 20")
 
-    gpu_active = gpu_df[gpu_df["utilization.gpu [%]"] > 5]
-    print(
-        "GPU active-period stats: "
-        f"mean util={gpu_active['utilization.gpu [%]'].mean():.1f}%, "
-        f"mean power={gpu_active['power.draw [W]'].mean():.2f} W"
-    )
+    #gpu_active = gpu_df[gpu_df["utilization.gpu [%]"] > 5]
+    #print(
+    #    "GPU active-period stats: "
+    #    f"mean util={gpu_active['utilization.gpu [%]'].mean():.1f}%, "
+    #    f"mean power={gpu_active['power.draw [W]'].mean():.2f} W"
+    #)
 
 
 if __name__ == "__main__":

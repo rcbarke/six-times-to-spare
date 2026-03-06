@@ -141,7 +141,7 @@ def plot_throughput_vs_iter(df: pd.DataFrame, out_path: str) -> None:
     )
 
     plt.figure(figsize=(6, 4))
-    plt.plot(agg["num_iter"], agg["cpu_thr"], marker="o", label="Grace CPU")
+    plt.plot(agg["num_iter"], agg["cpu_thr"], marker="o", label="Grace ARM CPU")
     plt.plot(agg["num_iter"], agg["gpu_thr"], marker="o", label="GB10 GPU")
 
     plt.xlabel("LDPC decoder iterations (num_iter)")
@@ -181,7 +181,7 @@ def plot_throughput_vs_codewords(df: pd.DataFrame, out_path: str) -> None:
     )
 
     plt.figure(figsize=(6, 4))
-    plt.plot(agg["num_codewords"], agg["cpu_thr"], marker="o", label="Grace CPU")
+    plt.plot(agg["num_codewords"], agg["cpu_thr"], marker="o", label="Grace ARM CPU")
     plt.plot(agg["num_codewords"], agg["gpu_thr"], marker="o", label="GB10 GPU")
 
     plt.xlabel("Number of codewords (N_cw)")
@@ -226,7 +226,7 @@ def plot_resource_utilization(
 
     # CPU histogram (in units of "active cores")
     axes[0].hist(cpu_active["cpu_cores"], bins=20)
-    axes[0].set_xlabel("Approx. Grace CPU cores used\n(LDPC python3 process)")
+    axes[0].set_xlabel("Approx. Grace ARM CPU cores used\n(LDPC python3 process)")
     axes[0].set_ylabel("Count")
     axes[0].set_title("CPU utilization during LDPC sweep")
     axes[0].grid(True, axis="y")
