@@ -1,81 +1,332 @@
-# consolidated/ — Unified LDPC sweep dataset (baseline + dense)
+# DGX Spark LDPC Study
 
-This directory contains **auto-generated, consolidated artifacts** produced by the repository’s dataset aggregation utility:
+This directory contains the **complete DGX Spark LDPC5G benchmark dataset** used in the paper:
 
-- `utils/ldpc_sweep_aggregate_datasets.py`
+**“Six Times to Spare: Characterizing GPU-Accelerated 5G LDPC Decoding for Edge-RSU Communications.”**
 
-The goal of `consolidated/` is to provide a **single, merge-compatible dataset** spanning the full tested codeword sweep range by combining:
+The DGX Spark experiments represent the **primary edge-platform evaluation** in the study.
 
-1) **Top-level (dense) sweep artifacts**  
-   - Dense/urban morphology proxy (large codeword sweep)
+Hardware platform:
 
-2) **`baseline/` sweep artifacts**  
-   - Lower-bound/rural morphology proxy (loose p95 tail-focused sweep, `N_cw ∈ {1 … 1024}` in powers of two)
+| Component | Hardware |
+|---|---|
+| CPU | NVIDIA **Grace ARM (20 cores)** |
+| GPU | NVIDIA **GB10 Blackwell GPU** |
+| Memory | **128 GB coherent LPDDR5x shared memory** |
+| Interconnect | **NVLink-C2C coherent CPU–GPU fabric** |
 
-Once the baseline sweep completes, re-running the aggregator produces a consolidated dataset that covers the **full codeword range** end-to-end (e.g., `N_cw ∈ {1 … 20480}` depending on the dense sweep maximum).
-
----
-
-## How this directory is produced
-
-From the **repository root**, run:
-
-```bash
-python3 utils/ldpc_sweep_aggregate_datasets.py
-````
-
-The script reads artifacts from:
-
-* repository root (dense sweep outputs), and
-* `baseline/` (baseline sweep outputs),
-
-and writes merged outputs into:
-
-* `consolidated/`
-
-> Treat this directory as **generated**. It can be deleted and regenerated at any time.
+Unlike the COTS workstation experiment, this system uses a **coherent CPU–GPU memory architecture**, which eliminates PCIe host/device memory transfers and better reflects a **compact edge-compute deployment target**.
 
 ---
 
-## Contents (generated artifacts)
+# Purpose
 
-The consolidated directory mirrors the standard artifact naming convention used by both the dense and baseline runs.
+This directory contains the **full DGX Spark LDPC sweep**, covering the entire experimental range:
 
-### Primary results
+```
 
-* `ldpc_sionna_spark.csv`
-  **Consolidated results table** across both sweeps. This is the main “single source of truth” dataset for plotting and post-processing once you want the full `N_cw` range.
+N_cw = 1 … 20480
+I    = 4 … 22
 
-### Telemetry / sweep statistics
+```
 
-* `gpu_ldpc_sweep_stats.csv`
-  Consolidated GPU-side and/or sweep telemetry statistics captured during runs (as emitted by the harness).
+The experiment characterizes:
 
-* `pid_ldpc_sweep_stats.log`
-  Consolidated system/process utilization log (pidstat-style), formed by concatenating the source logs with light header de-duplication.
+- GPU acceleration of **5G LDPC decoding**
+- throughput scaling with **codeword batch size**
+- throughput scaling with **belief-propagation iterations**
+- **CPU relief** when decoding runs on GPU
+- **accelerator utilization and power behavior**
 
-### Resume state
+These measurements support the paper’s central finding:
 
-* `ldpc_sionna_spark.checkpoint`
-  Consolidated checkpoint regenerated from the consolidated results CSV, enabling a consistent “last completed state” reference when resuming or validating sweep coverage.
-
----
-
-## Merge semantics
-
-* CSV artifacts are merged by **concatenation + row-level de-duplication**, then sorted when common sweep keys are present (e.g., `num_codewords`/`N_cw`, `num_iter`, `repeat`, timestamps).
-* Logs are merged by concatenation, with light header de-duplication for pidstat-like formats.
-* The consolidated checkpoint is **regenerated** based on the consolidated results CSV when possible (rather than attempting to merge checkpoint files directly).
+> GPU offload converts LDPC decoding from a CPU-heavy bottleneck into a bounded accelerator workload, yielding roughly **6× throughput improvement** in dense edge-RSU operating regimes.
 
 ---
 
-## When to use `consolidated/`
+# Directory Structure
 
-Use the consolidated dataset when you want:
+The DGX Spark experiments are organized into two regimes:
 
-* a single set of plots spanning baseline + dense regimes,
-* consistent, loose p95 tail interpretation across the low-`N_cw` region alongside saturation behavior at high `N_cw`,
-* a clean input for any downstream plotting/reporting pipeline (rather than manually stitching datasets).
+```
 
-If you only care about tail behavior, work directly from `baseline/`. If you only care about saturation behavior in dense regimes, work from the top-level artifacts. For end-to-end reporting, use `consolidated/`.
+dgx-spark/
+├── baseline/
+├── dense-codeword/
+├── sweep_ldpc_cumulative.sh
+├── ldpc_sionna_spark.csv
+├── gpu_ldpc_sweep_stats.csv
+├── pid_ldpc_sweep_stats.log
+└── plot_ldpc_results.py
+
+```
+
+### baseline/
+
+Small-batch **launch-limited regime**.
+
+```
+
+N_cw ∈ {1,2,4,…,1024}
+
+```
+
+Captures the region where:
+
+- GPU kernel launch overhead dominates
+- CPU and GPU performance are closest
+- GPU ramp-up behavior begins.
+
+---
+
+### dense-codeword/
+
+Steady-state **edge deployment regime**.
+
+```
+
+N_cw ∈ {2048,…,20480}
+
+```
+
+Captures the region where:
+
+- GPU occupancy saturates
+- throughput stabilizes
+- the paper’s **“Six Times to Spare”** result is measured.
+
+---
+
+# Sweep Driver
+
+The entire DGX Spark sweep is orchestrated by:
+
+```
+
+sweep_ldpc_cumulative.sh
+
+```
+
+The script executes the LDPC benchmark across all `(N_cw , I)` pairs while:
+
+- recording results to CSV
+- logging GPU telemetry
+- logging CPU utilization
+- checkpointing progress for crash-safe resume
+
+See implementation:
+
+---
+
+# Benchmark Driver
+
+The benchmark itself is implemented in:
+
+```
+
+ldpc_cpu_gpu_benchmark.py
+
+```
+
+The script constructs a complete Sionna PHY chain:
+
+```
+
+Binary source
+→ LDPC5G encoder
+→ 16-QAM mapper
+→ AWGN channel
+→ soft demapper
+→ LDPC5G decoder
+
+```
+
+Only the **LDPC decoder stage is timed**.
+
+The same TensorFlow graph is executed on:
+
+```
+
+/CPU:0  (Grace ARM)
+/GPU:0  (GB10)
+
+```
+
+enabling direct CPU vs GPU comparisons.
+
+---
+
+# Generated Data
+
+The sweep produces the following artifacts:
+
+| File | Description |
+|---|---|
+| `ldpc_sionna_spark.csv` | main results table |
+| `ldpc_sionna_spark.checkpoint` | sweep checkpoint |
+| `gpu_ldpc_sweep_stats.csv` | GPU telemetry |
+| `pid_ldpc_sweep_stats.log` | CPU utilization log |
+
+These files contain all data required to reproduce the paper’s plots.
+
+---
+
+# Post-Processing
+
+Figures are generated using:
+
+```
+
+plot_ldpc_results.py
+
+```
+
+which produces:
+
+```
+
+fig_ldpc_throughput_vs_codewords.png
+fig_ldpc_throughput_vs_iter.png
+fig_ldpc_resource_utilization.png
+
+```
+
+The script parses:
+
+- the benchmark CSV
+- GPU telemetry
+- pidstat CPU logs
+
+to compute throughput and utilization statistics.
+
+---
+
+# Observed Behavior
+
+Key observations from the DGX Spark sweep:
+
+### GPU scaling
+
+GPU throughput increases rapidly with batch size until approximately:
+
+```
+
+N_cw ≈ 256
+
+```
+
+after which the GPU reaches **steady-state throughput**.
+
+---
+
+### Dense-regime speedup
+
+Across the dense regime:
+
+```
+
+N_cw ≥ 2048
+
+```
+
+the GPU maintains approximately:
+
+```
+
+5.7× – 5.9× throughput improvement
+
+```
+
+over the Grace CPU.
+
+---
+
+### CPU utilization
+
+CPU decoding uses roughly:
+
+```
+
+~10–13 Grace cores
+
+```
+
+during dense runs.
+
+GPU offload therefore frees significant CPU capacity for:
+
+- scheduling logic
+- control-plane processing
+- colocated edge workloads.
+
+---
+
+### GPU utilization
+
+During active decode periods:
+
+```
+
+GB10 utilization frequently exceeds 90%
+
+```
+
+indicating the dense regime successfully drives the accelerator into a **high-occupancy steady state**.
+
+---
+
+# Why DGX Scaling Is Smooth
+
+The DGX Spark platform uses:
+
+```
+
+NVLink-C2C coherent CPU–GPU memory
+
+```
+
+which eliminates:
+
+- PCIe host/device transfers
+- duplicated host/GPU memory buffers
+- certain runtime placement overheads.
+
+As a result, throughput transitions smoothly from the ramp-up regime into the steady-state dense regime without the local maxima observed on discrete GPU systems.
+
+---
+
+# Relationship to Other Experiments
+
+The repository contains three main experiment sets:
+
+| Directory | Purpose |
+|---|---|
+| `dgx-spark/` | Edge platform evaluation |
+| `i9-14900K-rtx-4090/` | COTS workstation comparison |
+| `i9-14900K-rtx-4090/ldpc_spike/` | focused spike investigation |
+
+The DGX Spark experiments represent the **edge deployment target** used to justify the paper’s architectural conclusions.
+
+---
+
+# Paper Reference
+
+This dataset corresponds to:
+
+```
+
+Section V – Results and Evaluation
+Figure 2 – Throughput scaling
+Figure 3 – Resource utilization
+Table I – Slot-budget interpretation
+
+```
+
+in the paper.
+
+---
+
+# Reproducibility
+
+All scripts, logs, and plots required to reproduce the DGX Spark results are contained in this directory.
 

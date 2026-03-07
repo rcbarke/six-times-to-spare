@@ -1,90 +1,229 @@
-# baseline/ — LDPC baseline sweep (rural / tail-focused)
+# DGX Spark Baseline LDPC Sweep (Small-Batch / Launch-Limited Regime)
 
-This subdirectory contains the **baseline (lower-bound) LDPC sweep** and its generated artifacts. The baseline sweep covers a smaller, power-of-two codeword range:
+This directory contains the **baseline LDPC5G sweep performed on DGX Spark** covering the **small-batch regime** of the experiment.
 
-- **Codewords:** `N_cw ∈ {1, 2, 4, …, 1024}`
-- **Purpose:** characterize **rural morphologies** and loosely characterize **p95 tail behavior** (latency/throughput/resource utilization under lighter batching). This dataset can't make p99 claims since it is measured offline, does not fully model RAN timing, and each data point is a stored average across ten runs. We'd need per-batch sampling fully online to measure p99.
+Platform used:
 
-The baseline artifacts intentionally share the **same naming convention** as the top-level (dense/urban) sweep outputs so they can be combined later into a single unified dataset.
+| Component | Hardware |
+|---|---|
+| CPU | NVIDIA **Grace ARM (20 cores)** |
+| GPU | NVIDIA **GB10 Blackwell GPU** |
+| Memory | **128 GB coherent LPDDR5x shared memory** |
+| Interconnect | **NVLink-C2C coherent CPU–GPU fabric** |
 
----
-
-## Files
-
-### Sweep harness
-- `sweep_ldpc_baseline.sh`  
-  Baseline sweep driver script (lower-bound `N_cw` range). Produces the dataset artifacts listed below.
-
-### Generated dataset artifacts
-These files are produced by the baseline sweep and represent the complete baseline run:
-
-- `ldpc_sionna_spark.csv`  
-  Primary results table for the baseline sweep (per-ablation measurements).
-
-- `gpu_ldpc_sweep_stats.csv`  
-  GPU-focused telemetry/statistics captured during the sweep (as emitted by the measurement harness).
-
-- `ldpc_sionna_spark.checkpoint`  
-  Checkpoint file used to resume an interrupted sweep. Stores the last completed sweep state.
-
-- `pid_ldpc_sweep_stats.log`  
-  System/process resource utilization log captured during the sweep (pidstat-style).
-
-### Generated figures
-These plots are rendered from the baseline results and correspond to the same figure naming used at the repository root:
-
-- `fig_ldpc_throughput_vs_iter.png`  
-  Throughput as a function of LDPC iterations (iteration sensitivity).
-
-- `fig_ldpc_throughput_vs_codewords.png`  
-  Throughput as a function of codeword batch size `N_cw` (baseline lower-bound sweep).
-
-- `fig_ldpc_resource_utilization.png`  
-  Resource utilization summary (CPU/GPU/system metrics), derived from sweep telemetry.
+This experiment characterizes the **launch-limited and GPU ramp-up region** of LDPC decoding performance.
 
 ---
 
-## How to run the baseline sweep
+# Purpose
 
-From the repository root, run:
+The baseline sweep measures decoder performance when **batch sizes are small**, which occurs in:
+
+- rural or lightly loaded cells
+- early pipeline ramp-up
+- tail-oriented latency analysis
+
+It captures the regime where:
+
+```text
+CPU and GPU performance are closest
+````
+
+because GPU kernel launch overhead dominates.
+
+---
+
+# Baseline Sweep Configuration
+
+The baseline sweep evaluates:
+
+```text
+N_cw ∈ {1, 2, 4, …, 1024}
+I    ∈ {4, 6, 8, …, 22}
+```
+
+Where:
+
+| Variable | Meaning                                  |
+| -------- | ---------------------------------------- |
+| `N_cw`   | number of codewords decoded concurrently |
+| `I`      | belief-propagation iterations            |
+
+Each configuration performs:
+
+```text
+10 decode repetitions
+10 outer sweep repetitions
+```
+
+producing **100 samples per configuration**.
+
+---
+
+# Sweep Driver
+
+The baseline sweep is executed using:
+
+```text
+sweep_ldpc_baseline.sh
+```
+
+which runs the LDPC benchmark driver:
+
+```text
+ldpc_cpu_gpu_benchmark.py
+```
+
+The benchmark constructs a full Sionna PHY chain:
+
+```text
+Binary source
+→ LDPC5G encoder
+→ 16-QAM mapper
+→ AWGN channel
+→ soft demapper
+→ LDPC5G decoder
+```
+
+Only the **decoder stage is timed**.
+
+---
+
+# Telemetry Collection
+
+During the sweep the system records telemetry.
+
+## GPU telemetry
+
+```text
+gpu_ldpc_sweep_stats.csv
+```
+
+Captured using:
+
+```text
+nvidia-smi --query-gpu=timestamp,utilization.gpu,power.draw
+```
+
+Metrics include:
+
+* GPU utilization
+* GPU power draw
+
+## CPU telemetry
+
+```text
+pid_ldpc_sweep_stats.log
+```
+
+Collected via:
+
+```text
+pidstat -u -p ALL
+```
+
+From this log we estimate:
+
+```text
+active CPU cores ≈ CPU% / 100
+```
+
+This helps quantify **CPU relief when decoding is offloaded to GPU**.
+
+---
+
+# Generated Results
+
+Running the sweep produces:
+
+| File                           | Description             |
+| ------------------------------ | ----------------------- |
+| `ldpc_sionna_spark.csv`        | main results table      |
+| `ldpc_sionna_spark.checkpoint` | sweep resume checkpoint |
+| `gpu_ldpc_sweep_stats.csv`     | GPU telemetry           |
+| `pid_ldpc_sweep_stats.log`     | CPU utilization log     |
+
+---
+
+# Generated Figures
+
+Figures are produced using:
+
+```text
+plot_ldpc_results.py
+```
+
+which generates:
+
+```text
+fig_ldpc_throughput_vs_iter.png
+fig_ldpc_throughput_vs_codewords.png
+fig_ldpc_resource_utilization.png
+```
+
+These figures summarize:
+
+* throughput vs iteration count
+* throughput vs number of codewords
+* CPU/GPU resource utilization during the sweep
+
+---
+
+# Relationship to Other Experiments
+
+The DGX Spark experiments are split into two regimes:
+
+| Directory         | Purpose                           |
+| ----------------- | --------------------------------- |
+| `baseline/`       | small-batch launch-limited regime |
+| `dense-codeword/` | steady-state edge regime          |
+
+The **dense-codeword experiment** measures:
+
+```text
+N_cw ∈ {2048 … 20480}
+```
+
+where GPU acceleration stabilizes and the paper’s
+**“Six Times to Spare”** claim is measured.
+
+Together, these two sweeps produce the **complete DGX Spark ablation**:
+
+```text
+N_cw = 1 … 20480
+```
+
+---
+
+# Running the Baseline Sweep
+
+From the repository root:
 
 ```bash
-cd baseline/
+cd dgx-spark/baseline
 bash sweep_ldpc_baseline.sh
 ```
 
-This test is intended to be run in an independent subdirectory from the `sweep_ldpc.sh` large codeword ablation. It will generate the CSV artifacts, logs, checkpoint, and figures in **this `baseline/` directory, with identical naming convention**.
+The script automatically:
 
-> Tip: If a sweep is interrupted, the script should resume from `ldpc_sionna_spark.checkpoint` (if present). If you need to reconstruct checkpoint state from existing artifacts, use the checkpoint seeding utility in `utils/`.
-
----
-
-## How to use these baseline artifacts
-
-### 1) Tail-focused analysis (standalone)
-
-Use the CSV/logs/figures here directly to study:
-
-* low-batch behavior (`N_cw` small),
-* performance variability (tail latency / tail throughput behavior),
-* resource utilization under lighter batching.
-
-### 2) Consolidation with the dense (urban) sweep
-
-The baseline and dense sweeps are designed to be **merge-compatible**. To combine baseline (`N_cw ≤ 1024`) with the top-level dense sweep (extending up to the maximum `N_cw` tested), run the dataset aggregation utility (from repo root):
-
-```bash
-python3 utils/ldpc_sweep_aggregate_datasets.py
-```
-
-This writes merged artifacts to:
-
-* `consolidated/`
+* records telemetry
+* checkpoints progress
+* resumes interrupted sweeps
 
 ---
 
-## Intent
+# Paper Reference
 
-* **Baseline sweep (`baseline/`)**: lower-bound batching, rural morphology proxy, tail studies (p95 emphasis).
-* **Top-level sweep (repo root)**: dense batching, urban morphology proxy, saturation/upper-envelope behavior.
-* **Consolidated dataset (`consolidated/`)**: unified view across the full `N_cw` range for end-to-end plots and reporting.
+This dataset contributes to:
+
+* Figure 2 (baseline region)
+* Figure 3 (resource utilization)
+* Section V – Results and Evaluation
+
+in the paper.
+
+---
+
+# Reproducibility
+
+All scripts, logs, and plots required to reproduce the DGX Spark baseline results are included in this directory.
