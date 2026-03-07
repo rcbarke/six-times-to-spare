@@ -1,89 +1,208 @@
-# utils/ — LDPC sweep dataset utilities
+# utils/
 
-This directory contains small, standalone utilities used to manipulate the artifacts produced by the LDPC sweep test harness (the top-level `sweep_ldpc*.sh` scripts and their associated output files).
+This directory contains **utility scripts used to manage LDPC sweep experiments and datasets** for the *Six Times to Spare* study.
 
-> **Important (execution context):** Both dataset manipulation scripts were **designed to be run from the same directory as the main LDPC sweep test harness (e.g. the repository root)**, where the sweep scripts and top-level dataset artifacts live. They have been **relocated into `utils/` strictly for repository organization**.
->
-> When running them, either:
-> - `cd` to the repository root first, and invoke them by path, or
-> - run them from `utils/` but pass `--repo-root ..` (where supported).
+The scripts here support three primary tasks:
+
+1. **Aggregating LDPC sweep datasets**
+2. **Seeding or repairing sweep checkpoints**
+3. **Supervising long-running sweep jobs**
+
+These utilities are not tied to a single hardware platform and can be used with:
+
+- `dgx-spark/` experiments (edge platform)
+- `i9-14900K-rtx-4090/` experiments (COTS comparison)
 
 ---
 
-## Contents
+# Contents
 
-### `ldpc_sweep_aggregate_datasets.py`
-Aggregates dataset artifacts from:
-- the repository root (dense / “urban morphology” codeword sweep artifacts), and
-- the `baseline/` subdirectory (lower-bound / “rural morphology” sweep artifacts, useful for p95/p99 tail studies),
+## ldpc_sweep_aggregate_datasets.py
 
-into a single consolidated dataset spanning the full `N_cw` range (e.g., `{1 … 20480}`), writing merged artifacts to:
-- `dgx-spark/` (relative to the repository root)
+Aggregates dataset artifacts from two sweep regions:
 
-Typical behavior:
-- Merges CSV artifacts by concatenation + de-duplication (and sorting where possible).
-- Concatenates log artifacts (with light header de-duplication for pidstat-style logs).
-- Regenerates a consolidated checkpoint based on the consolidated results CSV (when applicable).
+- **baseline/**  
+  small-batch regime  
+  `N_cw = 1 … 1024`
 
-**Run from repo root:**
+- **dense sweep (repo root)**  
+  dense edge regime  
+  `N_cw = 2048 … 20480`
+
+into a single **consolidated dataset spanning the full range**.
+
+Typical workflow:
+
+```
+
+baseline/          → small-batch study
+repo root results  → dense sweep
+--------------------------------
+
+consolidated/      → merged dataset
+
+```
+
+The script merges artifacts including:
+
+```
+
+ldpc_sionna_*.csv
+gpu_ldpc_sweep_stats.csv
+pid_ldpc_sweep_stats.log
+ldpc_sionna_*.checkpoint
+
+````
+
+### Merge behavior
+
+| Artifact | Operation |
+|--------|--------|
+CSV datasets | concatenated + de-duplicated |
+pidstat logs | concatenated with header filtering |
+other logs | appended |
+checkpoint | regenerated from consolidated CSV |
+
+### Run
+
+From repository root:
+
 ```bash
 python3 utils/ldpc_sweep_aggregate_datasets.py
 ````
 
-**Or, run from `utils/` (explicit repo root):**
+or explicitly:
 
 ```bash
-cd utils
-python3 ldpc_sweep_aggregate_datasets.py --repo-root ..
+python3 utils/ldpc_sweep_aggregate_datasets.py --repo-root .
+```
+
+The merged dataset is written to:
+
+```
+dgx-spark/
 ```
 
 ---
 
-### `ldpc_sweep_seed_checkpoint.py`
+## ldpc_sweep_seed_checkpoint.py
 
-Seeds (or repairs) checkpoint state for the LDPC sweep harness based on existing dataset artifacts. This is useful when:
+Reconstructs a **valid sweep checkpoint** from an existing dataset CSV.
 
-* you have partial results from prior runs,
-* a sweep was interrupted, or
-* you want the harness to resume without redoing completed ablations.
+This allows a sweep to **resume from the last completed configuration** if a run was interrupted.
 
-The script inspects the existing output artifacts and reconstructs an appropriate “last seen” state (checkpoint) so the sweep harness can continue deterministically from the next configuration.
+The script parses dataset labels of the form:
 
-**Run from repo root:**
+```
+repX_NY_IZ
+```
+
+and reconstructs:
+
+```
+LAST_REP
+LAST_N
+LAST_I
+```
+
+which match the expected checkpoint format used by sweep scripts.
+
+Example output:
+
+```
+LAST_REP=2
+LAST_N=20480
+LAST_I=22
+```
+
+### Run
 
 ```bash
 python3 utils/ldpc_sweep_seed_checkpoint.py
 ```
 
-**This script does not have a repo-root argument, therefore we recommend copying it into the directory of your current running ablation study.**
+Optional arguments:
 
-```bash
-cd utils
-python3 ldpc_sweep_seed_checkpoint.py
+```
+python3 utils/ldpc_sweep_seed_checkpoint.py results.csv checkpoint.out
 ```
 
 ---
 
-## Conventions and repository layout assumptions
+## recovery_watchdog.sh
 
-These utilities assume the same layout as the LDPC sweep harness:
+Supervises long-running LDPC sweeps inside a **tmux session**.
 
-* **Repository root** contains the primary sweep scripts and dense-sweep artifacts:
+Purpose:
 
-  * `sweep_ldpc.sh` and/or related harness scripts
-  * top-level output artifacts (e.g., `ldpc_sionna_spark.csv`, `gpu_ldpc_sweep_stats.csv`, logs, checkpoints, etc.)
+* automatically restart crashed sweeps
+* preserve logs
+* allow unattended long-duration runs
 
-* **`baseline/`** contains:
+The watchdog monitors:
 
-  * `sweep_ldpc_baseline.sh` (and baseline artifacts with the same naming conventions as root artifacts)
+```
+tmux session
+tmux window
+pane state
+process exit codes
+```
 
-* **`consolidated/`** is created (or overwritten) by aggregation scripts as the unified output location.
+and respawns the sweep if the pane exits.
+
+The default monitored script is:
+
+```
+sweep_ldpc_cumulative.sh
+```
+
+### Usage
+
+```
+chmod +x utils/recovery_watchdog.sh
+./utils/recovery_watchdog.sh
+```
+
+Logs are written to:
+
+```
+sweep_ldpc_cumulative.watchdog.log
+```
 
 ---
 
-## Tips
+# Execution Context
 
-* Treat `consolidated/` as a generated directory (safe to delete and regenerate).
-* If you change artifact schemas (new columns, renamed fields), re-run aggregation so downstream plotting/post-processing sees a consistent dataset.
-* For reproducibility, commit scripts and configuration, but avoid committing large generated artifacts unless your repo policy explicitly requires it.
+These utilities assume the repository structure:
 
+```
+six-times-to-spare/
+
+  dgx-spark/
+      baseline/
+      dense-codeword/
+
+  i9-14900K-rtx-4090/
+      ldpc_spike/
+
+  utils/
+```
+
+Most utilities expect to be run **from the repository root**.
+
+Example:
+
+```
+cd six-times-to-spare
+python3 utils/ldpc_sweep_aggregate_datasets.py
+```
+
+---
+
+# Notes
+
+* `consolidated/` datasets are **generated artifacts** and can be safely regenerated.
+* Utilities intentionally avoid modifying raw experiment results.
+* These scripts support both **DGX Spark (edge)** and **COTS workstation** experiments.
+
+```
