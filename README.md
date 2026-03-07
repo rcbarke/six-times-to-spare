@@ -1,47 +1,89 @@
-# Six Times to Spare — LDPC5G decoding on NVIDIA DGX Spark (Grace CPU vs GB10 GPU)
+# Six Times to Spare: GPU-Accelerated 5G LDPC Decoding for Edge-RSU Communications
 
-This repository contains a reproducible LDPC5G decoding microbenchmark and artifact pipeline used in the **large codeword ablation study** (dense / “urban morphology” proxy), plus a **baseline lower-bound sweep** (rural / tail-focused) and an **automated dataset consolidator** that merges both regimes into one end-to-end dataset.
+This repository contains the **reproducible microbenchmark, sweep harnesses, telemetry logs, and plotting utilities** used in the paper:
 
-At a high level:
+**“Six Times to Spare: Characterizing GPU-Accelerated 5G LDPC Decoding for Edge-RSU Communications.”** 
 
-- **Top-level sweep (dense / urban proxy):** large N<sub>cw</sub> sweep to stress batch parallelism and expose the upper throughput envelope.
-- **`baseline/` sweep (rural / tail proxy):** lower-bound N<sub>cw</sub> ∈ {1, 2, 4, …, 1024} sweep designed for loose p95 tail interpretation.
-- **`consolidated/` dataset:** auto-generated merge of baseline + dense artifacts spanning the full tested N<sub>cw</sub> range.
+The study evaluates **5G NR LDPC decoding performance on compact heterogeneous edge hardware**, focusing on how GPU offload changes the **compute headroom available to roadside units (RSUs) and edge gNBs supporting URLLC vehicular workloads**.
 
----
-
-## Headline results (large codeword ablation)
-
-The top-level dense sweep demonstrates a consistent **~5.7×–5.9× throughput separation** between **Grace CPU** and **GB10 GPU** across the studied operating points.
-
-Key plots (generated artifacts):
-
-- `fig_ldpc_throughput_vs_iter.png` — throughput degrades with more LDPC iterations for both CPU and GPU, with the GPU sustaining a ~6× lead.
-- `fig_ldpc_throughput_vs_codewords.png` — throughput vs. N<sub>cw</sub> in the dense regime, showing a stable ~6× gap.
-- `fig_ldpc_resource_utilization.png` — resource usage histograms during the sweep:
-  - CPU usage clusters around a high-but-stable core-equivalent band during active decoding.
-  - GPU utilization shows strong saturation during active samples, as expected for the dense regime.
+The benchmark is built on the **Sionna LDPC5G implementation** and isolates the **LDPC decode kernel** while logging system telemetry to understand **compute, utilization, and power behavior under load**.
 
 ---
 
-## Repository layout
+# Key Results
 
-### File tree
+### Dense-regime edge performance (DGX Spark)
 
-```text
-.
-├── DGX_SPARK.md
+In the **edge-relevant dense regime**
+
+```
+N_cw ∈ {2048 … 20480}
+```
+
+the **GB10 GPU on DGX Spark sustains ~5.8× throughput advantage over the Grace CPU**.
+
+Typical dense-regime service times:
+
+| Iterations | Grace CPU t_cb | GB10 GPU t_cb |
+| ---------- | -------------- | ------------- |
+| 4          | 0.153 ms       | 0.026 ms      |
+| 10         | 0.373 ms       | 0.064 ms      |
+| 20         | 0.725 ms       | 0.126 ms      |
+
+Against a **0.5 ms URLLC slot budget**:
+
+* GPU decoding uses **5–25% of the slot**
+* CPU decoding can exceed **100% of the slot**
+
+This produces the **“Six Times to Spare” edge headroom result**.
+
+---
+
+### Workstation comparison (COTS)
+
+A COTS reference system (i9-14900K + RTX 4090) provides an **upper-bound comparison**, not an edge deployment recommendation.
+
+Dense-regime results:
+
+* **Mean speedup:** ~14.5×
+* **Absolute throughput:** significantly higher
+* **Power increase:** ~80–160 W above baseline during active decode windows
+
+This comparison illustrates **raw acceleration potential**, but the **DGX Spark result is the deployment-relevant edge outcome**.
+
+---
+
+### Scaling regimes
+
+The full sweep
+
+```
+N_cw = 1 … 20480
+```
+
+reveals three operating regions:
+
+1. **Launch-limited small batches**
+
+   * CPUs competitive
+2. **GPU ramp-up**
+
+   * parallel efficiency increases with batch size
+3. **Dense steady state**
+
+   * accelerator throughput stabilizes
+
+This structure explains **where GPU acceleration emerges and where it disappears**.
+
+---
+
+# Repository Structure
+
+```
+six-times-to-spare/
+
 ├── README.md
-├── sweep_ldpc.sh
-├── ldpc_cpu_gpu_benchmark.py
-├── plot_ldpc_results.py
-├── ldpc_sionna_spark.csv
-├── gpu_ldpc_sweep_stats.csv
-├── pid_ldpc_sweep_stats.log
-├── ldpc_sionna_spark.checkpoint
-├── fig_ldpc_resource_utilization.png
-├── fig_ldpc_throughput_vs_codewords.png
-├── fig_ldpc_throughput_vs_iter.png
+├── plot_paper.py
 │
 ├── install-sionna-spark/
 │   ├── README.md
@@ -54,305 +96,203 @@ Key plots (generated artifacts):
 ├── utils/
 │   ├── README.md
 │   ├── ldpc_sweep_seed_checkpoint.py
-│   └── ldpc_sweep_aggregate_datasets.py
+│   ├── ldpc_sweep_aggregate_datasets.py
+│   └── recovery_watchdog.sh
 │
-├── baseline/
+├── dgx-spark/
+│   │
 │   ├── README.md
-│   ├── sweep_ldpc_baseline.sh
-│   ├── fig_ldpc_resource_utilization.png
-│   ├── fig_ldpc_throughput_vs_codewords.png
-│   ├── fig_ldpc_throughput_vs_iter.png
+│   ├── sweep_ldpc.sh
+│   ├── ldpc_cpu_gpu_benchmark.py
+│   ├── plot_ldpc_results.py
+│   ├── gpu_ldpc_sweep_stats.csv
 │   ├── pid_ldpc_sweep_stats.log
-│   ├── ldpc_sionna_spark.checkpoint
 │   ├── ldpc_sionna_spark.csv
-│   └── gpu_ldpc_sweep_stats.csv
+│   ├── ldpc_sionna_spark.checkpoint
+│   │
+│   ├── dense-codeword/
+│   │   ├── README.md
+│   │   ├── sweep_ldpc.sh
+│   │   ├── fig_ldpc_throughput_vs_codewords.png
+│   │   ├── fig_ldpc_throughput_vs_iter.png
+│   │   └── fig_ldpc_resource_utilization.png
+│   │
+│   └── baseline/
+│       ├── README.md
+│       ├── sweep_ldpc_baseline.sh
+│       ├── fig_ldpc_throughput_vs_codewords.png
+│       ├── fig_ldpc_throughput_vs_iter.png
+│       └── fig_ldpc_resource_utilization.png
 │
-├── i9-14900K-rtx-4090/
-│   ├── README.md
-│   ├── sweep_ldpc_cumulative.sh
-│   ├── fig_ldpc_resource_utilization.png
-│   ├── fig_ldpc_throughput_vs_codewords.png
-│   ├── fig_ldpc_throughput_vs_iter.png
-│   ├── pid_ldpc_sweep_stats.log
-│   ├── ldpc_sionna_spark.checkpoint
-│   ├── ldpc_sionna_spark.csv
-│   └── gpu_ldpc_sweep_stats.csv
-|
-└── dgx-spark/
+└── i9-14900K-rtx-4090/
+    │
     ├── README.md
     ├── sweep_ldpc_cumulative.sh
-    ├── fig_ldpc_resource_utilization.png
-    ├── fig_ldpc_throughput_vs_codewords.png
-    ├── fig_ldpc_throughput_vs_iter.png
+    ├── ldpc_cpu_gpu_benchmark.py
+    ├── plot_ldpc_results.py
+    ├── gpu_ldpc_sweep_stats.csv
     ├── pid_ldpc_sweep_stats.log
-    ├── ldpc_sionna_spark.checkpoint
-    ├── ldpc_sionna_spark.csv
-    └── gpu_ldpc_sweep_stats.csv
+    ├── ldpc_sionna_cots.csv
+    ├── ldpc_sionna_cots.checkpoint
+    │
+    └── ldpc_spike/
+        ├── README.md
+        ├── profile_ldpc_spike_cots.sh
+        └── focused spike ablation artifacts
 ```
 
-> Notes:
->
-> * `baseline/` and `consolidated/` mirror the **same artifact naming convention** as the top-level dense sweep so downstream plotting and analysis can treat them uniformly.
-> * `consolidated/` is **generated** by `utils/ldpc_sweep_aggregate_datasets.py`. It can be deleted and regenerated at any time.
+---
+
+# Experiments
+
+The repository contains **two hardware studies**.
+
+### 1️⃣ DGX Spark edge platform
+
+```
+dgx-spark/
+```
+
+Hardware:
+
+* **Grace ARM CPU (20 cores)**
+* **GB10 Blackwell GPU**
+* **128 GB unified memory**
+* **NVLink-C2C coherent CPU–GPU interconnect**
+
+Experiments include:
+
+* **baseline sweep** (small batch regime)
+* **dense sweep** (edge deployment regime)
+* telemetry-backed utilization analysis
 
 ---
 
-## Platform documentation (DGX_SPARK.md)
+### 2️⃣ COTS workstation comparison
 
-* NVIDIA DGX Spark is a compact, 240 W Grace–Blackwell (GB10) desktop AI system with a 20-core Arm Grace CPU, Blackwell GPU (5th-gen Tensor Cores, FP4), and 128 GB coherent unified LPDDR5x memory over NVLink-C2C. 
-* It includes 4 TB self-encrypting NVMe storage plus high-speed I/O (ConnectX-7 200 Gbps, 10 GbE, Wi-Fi 7, USB-C, HDMI) and is positioned for local prototyping, fine-tuning, and multi-model/agentic inference, with stated single-node capacity up to ~200B parameters (FP4) and ~405B across two linked units. 
-* The document also clarifies power reporting (e.g., `nvidia-smi` reflects GPU power, not total draw) and provides a DGX OS recovery/reflash guide plus a high-level comparison against GH200/GB200 rack-scale systems. 
+```
+i9-14900K-rtx-4090/
+```
 
----
+Hardware:
 
-## Subdirectory structure
+* Intel **i9-14900K CPU**
+* NVIDIA **RTX 4090 GPU**
+* discrete CPU/GPU memory connected via PCIe
 
-### `install-sionna-spark/`
+Includes:
 
-DGX Spark bring-up and validation utilities: install notes, environment checks, and a known-good end-to-end Sionna LDPC example to confirm functional correctness and device visibility (TensorFlow/Sionna/GPU).
+* full sweep replication
+* **focused spike ablation**
+* power-draw characterization
 
-### `utils/`
-
-Repository organization for dataset-manipulation utilities (originally designed to run from the same directory as the sweep harness at repo root):
-
-* `ldpc_sweep_seed_checkpoint.py`
-  Seeds/repairs checkpoint state from existing artifacts to support deterministic resumption.
-* `ldpc_sweep_aggregate_datasets.py`
-  Merges baseline (`baseline/`) + dense (repo root) artifacts into `consolidated/`.
-
-### `baseline/`
-
-Lower-bound, tail-focused sweep:
-
-* N<sub>cw</sub> ∈ {1, 2, 4, …, 1024} (powers of two)
-* Rural morphology proxy + loose p95 tail studies
-
-Contains its own sweep driver (`sweep_ldpc_baseline.sh`) and a full artifact set (CSVs/logs/checkpoint/figures).
-
-### `consolidated/`
-
-Auto-generated merge of baseline + dense datasets, intended as the **single source of truth** for end-to-end plotting and reporting across the full tested N<sub>cw</sub> range.
+The spike study explains the **temporary RTX 4090 peak near N_cw ≈ 1024**.
 
 ---
 
-## Top-level (dense) sweep harness and artifacts
+# Benchmark Model
 
-### Sweep driver
+The LDPC workload implements an **NR-like link-level PHY chain**:
 
-* `sweep_ldpc.sh`
-  Runs the dense/urban-proxy sweep and produces the top-level artifacts listed below.
+```
+information bits
+→ LDPC encoder (k=512, n=1024)
+→ 16-QAM mapper
+→ AWGN channel
+→ soft demapper
+→ LDPC decoder
+```
 
-### Core artifacts produced by the dense sweep
+The decoder is executed on:
 
-* `ldpc_sionna_spark.csv` — primary results table (per-ablation measurements)
-* `gpu_ldpc_sweep_stats.csv` — GPU / sweep telemetry statistics
-* `pid_ldpc_sweep_stats.log` — pidstat-style process/system utilization log
-* `ldpc_sionna_spark.checkpoint` — resume state for interrupted sweeps
+```
+/CPU:0
+/GPU:0
+```
 
-### Figures (generated)
-
-* `fig_ldpc_throughput_vs_iter.png`
-* `fig_ldpc_throughput_vs_codewords.png`
-* `fig_ldpc_resource_utilization.png`
-
-### Analysis / plotting
-
-* `plot_ldpc_results.py`
-  Post-processes sweep artifacts and generates the figures.
-
-### Benchmark entrypoint
-
-* `ldpc_cpu_gpu_benchmark.py`
-  Main benchmark logic used by the sweep harness (CPU vs GPU decode path, iteration sweep, codeword sweep).
+using the **same TensorFlow/Sionna graph**, isolating hardware execution as the primary variable.
 
 ---
 
-## Running the experiments
+# Running the Experiments
 
-### 1) Dense (large codeword) ablation
+### Dense sweep (edge regime)
 
-From the repository root:
-
-```bash
+```
+cd dgx-spark
 bash sweep_ldpc.sh
 ```
 
-### 2) Baseline (tail-focused) ablation
+### Baseline sweep
 
-From the repository root:
-
-```bash
-cd baseline
+```
+cd dgx-spark/baseline
 bash sweep_ldpc_baseline.sh
 ```
 
-### 3) Consolidate datasets (baseline + dense)
+### COTS comparison
 
-From the repository root:
-
-```bash
-python3 utils/ldpc_sweep_aggregate_datasets.py
+```
+cd i9-14900K-rtx-4090
+bash sweep_ldpc_cumulative.sh
 ```
 
-This writes merged artifacts into `consolidated/`.
+### Spike ablation
 
----
-
-## Recommended workflow
-
-1. Run the **dense sweep** (repo root) to capture saturation behavior in large `\($N_{cw}$)` regimes.
-2. Run the **baseline sweep** (`baseline/`) for lower-bound behavior and tail interpretation.
-3. Run the **aggregator** to produce a single dataset in `consolidated/`.
-4. Use `plot_ldpc_results.py` (or your downstream analysis pipeline) against `consolidated/` for end-to-end figures that span both regimes.
-
----
-
-## Reproducibility notes
-
-* Treat `baseline/` and `consolidated/` as artifact directories; delete/regenerate as needed.
-* Checkpoints are intended to support resumption and should not be manually edited unless you know exactly what you’re doing.
-* If you refactor schema (CSV column names, telemetry formats), regenerate consolidated artifacts to keep downstream plotting consistent.
-
----
-
-## Six Times to Spare: Characterizing GPU-Accelerated 5G LDPC Decoding for Edge-RSU Communications
-
-This repository contains the **reproducible, telemetry-backed microbenchmark** and plotting utilities used in the paper:
-
-**“Six Times to Spare: Characterizing GPU-Accelerated 5G LDPC Decoding for Edge-RSU Communications.”** 
-
-The goal is simple: **isolate and measure LDPC5G decoding headroom** on a compact heterogeneous edge node (DGX Spark), comparing **Grace CPU** vs **GB10 GPU** under a deliberately heavy stress sweep over:
-- batch parallelism (**$N_{cw}$ = 2048 → 20480**) and
-- belief-propagation iterations (**$I$ = 4 → 22**),
-timing **only the decode kernel** while logging CPU/GPU utilization and power. 
-
----
-
-### What this study shows
-
-Across the full sweep, GPU offload provides a stable, repeatable throughput advantage:
-- **Mean GPU/CPU throughput speedup ≈ 5.8×** (median ≈ 5.8×; min ≈ 4.7×; max ≈ 6.4×). 
-- Throughput declines with iterations (expected), but the **speedup holds across $I$**. 
-
-#### URLLC slot-headroom interpretation (0.5 ms slot)
-Using amortized per-codeword service time \($t_{cb} = t_{dec}/N_{cw}$\) and normalizing by **$T_{slot}$ = 0.5 ms**:
-- **CPU** reaches **0.720 ms at I=20** (i.e., **1.44× the slot**).
-- **GPU** reaches **0.125 ms at I=20** (i.e., **0.25× the slot**). 
-
-#### Telemetry-backed resource shift
-During active decode periods:
-- CPU-based decoding consumes on the order of **~10 “core-equivalents”**.
-- GPU-based decoding drives **high accelerator utilization (often ~90%+)**.
-- Incremental GPU power during active decode is **~10–15 W above low-utilization baseline**, trading ~10 CPU cores for modest accelerator power. 
-
----
-
-### Key top-level artifacts
-
-**Benchmark**
-- `ldpc_cpu_gpu_benchmark.py` — generates LLRs once, then times **only LDPC5G decode** on `/CPU:0` and `/GPU:0`; appends run summaries to CSV.
-
-**Sweep + checkpointing**
-- `sweep_ldpc.sh` — runs the ($N_{cw}$, $I$) sweep and logs results
-- `ldpc_sweep_seed_checkpoint.py` — derives a resume checkpoint from the results CSV
-
-**Telemetry + plotting**
-- `gpu_ldpc_sweep_stats.csv` — `nvidia-smi` sampled utilization/power
-- `pid_ldpc_sweep_stats.log` — process CPU accounting (e.g., pidstat)
-- `plot_ldpc_results.py` — regenerates:
-  - `fig_ldpc_throughput_vs_iter.png`
-  - `fig_ldpc_resource_utilization.png`
-
----
-
-### System model and workload (what we benchmark)
-
-We implement an NR-like link-level chain using Sionna LDPC5G components:
-- ($k$, $n$) = (512, 1024), rate $R$ = 1/2
-- 16-QAM mapping
-- AWGN channel
-- soft demapper generates LLRs
-- LDPC decoder consumes an LLR tensor of shape \($N_{cw} \times n$\) 
-
-**Important:** the benchmark is designed to **stress and saturate** the compute substrate to expose an **upper envelope** of throughput/headroom; it is not trying to emulate a specific scheduler instance. The paper focuses on the larger $N_{cw}$ ablations within the top-level repository, the smaller batch `baseline/` results are included for completeness but not the primary focus.
-
----
-
-### Reproducing the paper figures
-
-#### 1) Run the sweep
-```bash
-bash sweep_ldpc.sh
+```
+cd i9-14900K-rtx-4090/ldpc_spike
+./profile_ldpc_spike_cots.sh
 ```
 
-This produces (or appends to):
+---
 
-* `ldpc_sionna_spark.csv`
+# Generated Figures
 
-#### 2) Additional telemetry
+Major plots used in the paper include:
 
-The sweep script will log raw LDPC timing statistics as well as the following system-level resource utilization metrics:
+* throughput vs iterations
+* throughput vs codewords
+* resource utilization histograms
+* combined DGX vs COTS comparisons
 
-**GPU telemetry:**
+Generated using:
 
-```bash
-nvidia-smi --query-gpu=timestamp,utilization.gpu,power.draw --format=csv -l 1 > gpu_ldpc_sweep_stats.csv
 ```
-
-**CPU telemetry (benchmark process):**
-
-```bash
-pidstat -u -p ALL 1 > pid_ldpc_sweep_stats.log
+plot_ldpc_results.py
+plot_paper.py
 ```
-
-#### 3) Plot
-
-```bash
-python3 plot_ldpc_results.py
-```
-
-Outputs:
-
-* `fig_ldpc_throughput_vs_iter.png (Figure 1)` 
-* `fig_ldpc_throughput_vs_codewords.png (described in text)`
-* `fig_ldpc_resource_utilization.png (Figure 2)`
 
 ---
 
-### Metrics reported
+# Telemetry
 
-Per configuration ($N_{cw}$, $I$), the harness reports:
+The benchmark logs both **timing and system metrics**.
 
-* batch decode latency: ($t_{dec}$)
-* throughput: ($T_{thr} = \frac{N_{cw} \cdot k}{t_{dec}}$)
-* amortized per-codeword service time: ($t_{cb} = \frac{t_{dec}}{N_{cw}}$)
+GPU telemetry:
 
-Timing includes explicit synchronization so asynchronous GPU work completes before stopping the timer.
+```
+nvidia-smi --query-gpu=timestamp,utilization.gpu,power.draw --format=csv -l 1
+```
 
----
+CPU telemetry:
 
-### Scope
+```
+pidstat -u -p ALL 1
+```
 
-This repo supports a **compute characterization** of the LDPC kernel:
-
-* ($t_{cb}$) is **amortized under batch-parallel execution**, not “arrival-at-idle” single-codeword latency.
-* The workload uses AWGN and reuses a fixed LLR tensor for timing consistency.
-* Stronger URLLC latency claims would require **small-batch and tail-latency (p95/p99/p99.99)** measurements in a more integrated real-time stack.
+These logs support the **telemetry-backed analysis presented in the paper**, including CPU core usage, GPU occupancy, and power behavior.
 
 ---
 
-### Citation
+# Citation
 
-If you use this repository, please cite the paper draft:
+If you use this repository, please cite:
 
-> Ryan Barker, Julia Boone, Tolunay Seyfi, Alireza Ebrahimi Dorcheh, Fatemeh Afghah, Joseph Boccuzzi,
-> “Six Times to Spare: Characterizing GPU-Accelerated 5G LDPC Decoding for Edge-RSU Communications.”
+```
+Ryan Barker, Julia Boone, Tolunay Seyfi,
+Alireza Ebrahimi Dorcheh, Fatemeh Afghah,
+Joseph Boccuzzi
 
-```bibtex
-@unpublished{barker_six_times_to_spare,
-  title   = {Six Times to Spare: Characterizing GPU-Accelerated 5G LDPC Decoding for Edge-RSU Communications},
-  author  = {Barker, Ryan and Boone, Julia and Seyfi, Tolunay and Ebrahimi Dorcheh, Alireza, Afghah, Fatemeh, and Boccuzzi, Joseph},
-  note    = {Paper draft},
-  year    = {2026}
-}
+Six Times to Spare: Characterizing GPU-Accelerated
+5G LDPC Decoding for Edge-RSU Communications
 ```
