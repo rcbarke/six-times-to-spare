@@ -288,11 +288,19 @@ These logs support the **telemetry-backed analysis presented in the paper**, inc
 
 If you use this repository, please cite:
 
-```
-Ryan Barker, Julia Boone, Tolunay Seyfi,
-Alireza Ebrahimi Dorcheh, Fatemeh Afghah,
-Joseph Boccuzzi
-
-Six Times to Spare: Characterizing GPU-Accelerated
-5G LDPC Decoding for Edge-RSU Communications
+```bibtex
+@inproceedings{barker2026timessparecharacterizinggpuaccelerated,
+  title        = {Six Times to Spare: Characterizing GPU-Accelerated 5G LDPC Decoding for Edge-RSU Communications},
+  author       = {Barker, Ryan and Boone, Julia and Seyfi, Tolunay and Ebrahimi Dorcheh, Alireza and Afghah, Fatemeh and Boccuzzi, Joseph},
+  booktitle    = {Proceedings of the 2026 IEEE 104th Vehicular Technology Conference: VTC2026-Fall},
+  year         = {2026},
+  address      = {Boston, MA, USA},
+  organization = {IEEE},
+  eprint       = {2602.04652},
+  archivePrefix= {arXiv},
+  primaryClass = {cs.DC},
+  url          = {https://arxiv.org/abs/2602.04652},
+  doi          = {10.48550/arXiv.2602.04652}
+  note         = {Track: 6G and Emerging Technologies. Paper ID: 336-63397},
+}
 ```
