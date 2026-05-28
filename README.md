@@ -300,7 +300,7 @@ If you use this repository, please cite:
   archivePrefix= {arXiv},
   primaryClass = {cs.DC},
   url          = {https://arxiv.org/abs/2602.04652},
-  doi          = {10.48550/arXiv.2602.04652}
-  note         = {Track: 6G and Emerging Technologies. Paper ID: 336-63397},
+  doi          = {10.48550/arXiv.2602.04652},
+  note         = {Track: 6G and Emerging Technologies. Paper ID: 336-63397}
 }
 ```
